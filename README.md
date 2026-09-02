@@ -41,8 +41,10 @@ psql "$DATABASE_URL" -f supabase/seed.sql   # או דרך ה-SQL editor
 | `src/app/page.tsx` | מסך הבית (§8.2) — מונע מלוגיקת הליבה, כרגע עם נתוני דמה |
 | `src/app/login/page.tsx` + `src/app/auth/callback/route.ts` | flow התחברות Google (§7, scope calendar.events) |
 | `src/app/onboarding/` | אשף onboarding (§8.1) — בחירת בי"ס, דתות, תאריך יעד |
+| `src/app/calendar/` | מסך לוח (§8.3) — תצוגת חודש, כותרת כפולה, 3 קטגוריות צבע |
+| `src/app/profile/` | מסך פרופיל (§8.4) — פרטי המורה וערכת נושא (עריכה בקרוב) |
 | `src/lib/supabase/` | לקוחות Supabase (browser + server) + middleware לרענון סשן |
-| `src/components/` | HeroCount · ProgressBar · StatCard · UpcomingList |
+| `src/components/` | HeroCount · ProgressBar · StatCard · UpcomingList · MonthCalendar · BottomNav |
 
 מסך הבית פועל כבר עכשיו עם נתוני דמה (`src/lib/mock-data.ts`), עד שה-onboarding
 וה-seed מחוברים. הצבעים מקודדים סטטוס בלבד, לא דת (§9).
@@ -64,6 +66,7 @@ npm run typecheck  # בדיקת טיפוסים (tsc --noEmit, strict)
 
 ## הבא בתור
 
-- חיבור מסך הבית לנתוני Supabase אמיתיים (המורה שהתחבר) במקום נתוני הדמה.
-- מסך לוח (§8.3), מסך פרופיל וימים אישיים (§8.4).
+- חיבור כל המסכים לנתוני Supabase אמיתיים (המורה שהתחבר) במקום נתוני הדמה.
+- פרופיל מלא + עריכה + ימים אישיים (§8.4): הוספה/מחיקה של `custom_days`.
 - seed נותר — ייבוא `schools` ממשרד החינוך ו-`holidays` (שלב 1, פריט 3).
+- סנכרון Google Calendar + cron יומי (§7, שלב 3).

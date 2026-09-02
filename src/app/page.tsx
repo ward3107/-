@@ -15,6 +15,7 @@ import { HeroCount } from '@/components/HeroCount';
 import { ProgressBar } from '@/components/ProgressBar';
 import { StatCard } from '@/components/StatCard';
 import { UpcomingList } from '@/components/UpcomingList';
+import { BottomNav } from '@/components/BottomNav';
 
 // המסך תלוי בתאריך הנוכחי → מתרנדר לכל בקשה.
 export const dynamic = 'force-dynamic';
@@ -45,7 +46,7 @@ export default function HomePage() {
   const themeStyle = { '--theme': themeColorValue(MOCK_TEACHER.themeColor) } as CSSProperties;
 
   return (
-    <main style={themeStyle} className="mx-auto flex min-h-screen max-w-md flex-col gap-4 p-4 pb-10">
+    <main style={themeStyle} className="mx-auto flex min-h-screen max-w-md flex-col gap-4 p-4 pb-28">
       <header className="pt-4">
         <p className="text-sm font-medium text-slate-400">שנת הלימודים {label}</p>
         <h1 className="text-xl font-bold text-slate-800">שלום, {MOCK_TEACHER.fullName}</h1>
@@ -78,6 +79,8 @@ export default function HomePage() {
         </div>
         <UpcomingList items={upcoming} />
       </section>
+
+      <BottomNav />
     </main>
   );
 }

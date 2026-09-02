@@ -350,8 +350,10 @@ https://data.gov.il/api/action/datastore_search?resource_id=<ID>&limit=32000
 - `src/app/page.tsx` — מסך הבית (§8.2), מונע מלוגיקת הליבה, כרגע עם נתוני דמה (`src/lib/mock-data.ts`).
 - `src/app/login/` + `src/app/auth/callback/` — flow התחברות Google (§7, scope calendar.events).
 - `src/app/onboarding/` — אשף בחירת בי"ס (§11.4 — בחירה מרשימה בלבד), דתות (multi-select), תאריך יעד נגזר (§8.1).
+- `src/app/calendar/` — מסך לוח (§8.3): תצוגת חודש, כותרת כפולה (לועזי + עברי), סרגל סיכום, 3 קטגוריות צבע, כרטיס פרטי יום.
+- `src/app/profile/` — מסך פרופיל (§8.4) ראשוני: פרטי המורה + ערכת נושא (עריכה בקרוב).
 - `src/lib/supabase/` — לקוחות Supabase (browser + server) + middleware לרענון סשן.
-- `src/components/` — HeroCount · ProgressBar · StatCard · UpcomingList.
+- `src/components/` — HeroCount · ProgressBar · StatCard · UpcomingList · MonthCalendar · BottomNav.
 
-**הבא בתור:** חיבור מסך הבית ל-Supabase אמיתי (המורה המחובר), מסך לוח (§8.3),
-פרופיל וימים אישיים (§8.4), ו-seed נותר — ייבוא `schools` ו-`holidays` (שלב 1, פריט 3).
+**הבא בתור:** חיבור המסכים ל-Supabase אמיתי (המורה המחובר), פרופיל מלא + ימים אישיים (§8.4),
+ו-seed נותר — ייבוא `schools` ו-`holidays` (שלב 1, פריט 3).
