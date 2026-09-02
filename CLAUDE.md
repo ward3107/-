@@ -349,8 +349,9 @@ https://data.gov.il/api/action/datastore_search?resource_id=<ID>&limit=32000
 - `src/app/layout.tsx` — shell עברי RTL + גופן Heebo.
 - `src/app/page.tsx` — מסך הבית (§8.2), מונע מלוגיקת הליבה, כרגע עם נתוני דמה (`src/lib/mock-data.ts`).
 - `src/app/login/` + `src/app/auth/callback/` — flow התחברות Google (§7, scope calendar.events).
-- `src/lib/supabase/` — לקוחות Supabase (browser + server).
+- `src/app/onboarding/` — אשף בחירת בי"ס (§11.4 — בחירה מרשימה בלבד), דתות (multi-select), תאריך יעד נגזר (§8.1).
+- `src/lib/supabase/` — לקוחות Supabase (browser + server) + middleware לרענון סשן.
 - `src/components/` — HeroCount · ProgressBar · StatCard · UpcomingList.
 
-**הבא בתור:** חיבור מסך הבית ל-Supabase אמיתי, onboarding מלא (§8.1), מסך לוח (§8.3),
-ו-seed נותר — ייבוא `schools` ו-`holidays` (שלב 1, פריט 3).
+**הבא בתור:** חיבור מסך הבית ל-Supabase אמיתי (המורה המחובר), מסך לוח (§8.3),
+פרופיל וימים אישיים (§8.4), ו-seed נותר — ייבוא `schools` ו-`holidays` (שלב 1, פריט 3).

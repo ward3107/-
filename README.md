@@ -40,7 +40,8 @@ psql "$DATABASE_URL" -f supabase/seed.sql   # או דרך ה-SQL editor
 | `src/app/layout.tsx` | shell עברי RTL + גופן Heebo |
 | `src/app/page.tsx` | מסך הבית (§8.2) — מונע מלוגיקת הליבה, כרגע עם נתוני דמה |
 | `src/app/login/page.tsx` + `src/app/auth/callback/route.ts` | flow התחברות Google (§7, scope calendar.events) |
-| `src/lib/supabase/` | לקוחות Supabase (browser + server) |
+| `src/app/onboarding/` | אשף onboarding (§8.1) — בחירת בי"ס, דתות, תאריך יעד |
+| `src/lib/supabase/` | לקוחות Supabase (browser + server) + middleware לרענון סשן |
 | `src/components/` | HeroCount · ProgressBar · StatCard · UpcomingList |
 
 מסך הבית פועל כבר עכשיו עם נתוני דמה (`src/lib/mock-data.ts`), עד שה-onboarding
@@ -58,9 +59,11 @@ npm run typecheck  # בדיקת טיפוסים (tsc --noEmit, strict)
 
 הגדרת Supabase: העתק `.env.example` ל-`.env.local` ומלא את המפתחות.
 
+אשף ה-onboarding עובד עם נתוני דמה (`src/lib/schools.ts`) כשאין פרויקט Supabase מחובר,
+ומתחבר אוטומטית ל-`schools` האמיתיים כשיש קרדנציאלס.
+
 ## הבא בתור
 
-- חיבור מסך הבית לנתוני Supabase אמיתיים במקום נתוני הדמה.
-- onboarding מלא (בחירת בית ספר, דתות, תאריך יעד — §8.1).
-- מסך לוח (§8.3), ימים אישיים (§8.4).
+- חיבור מסך הבית לנתוני Supabase אמיתיים (המורה שהתחבר) במקום נתוני הדמה.
+- מסך לוח (§8.3), מסך פרופיל וימים אישיים (§8.4).
 - seed נותר — ייבוא `schools` ממשרד החינוך ו-`holidays` (שלב 1, פריט 3).
