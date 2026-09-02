@@ -33,15 +33,34 @@ supabase db push          # מריץ את המיגרציות
 psql "$DATABASE_URL" -f supabase/seed.sql   # או דרך ה-SQL editor
 ```
 
+מיושם **תחילת שלב 2** — אפליקציית Next.js 15 (App Router, RTL עברית, Tailwind):
+
+| נתיב | תוכן |
+|------|------|
+| `src/app/layout.tsx` | shell עברי RTL + גופן Heebo |
+| `src/app/page.tsx` | מסך הבית (§8.2) — מונע מלוגיקת הליבה, כרגע עם נתוני דמה |
+| `src/app/login/page.tsx` + `src/app/auth/callback/route.ts` | flow התחברות Google (§7, scope calendar.events) |
+| `src/lib/supabase/` | לקוחות Supabase (browser + server) |
+| `src/components/` | HeroCount · ProgressBar · StatCard · UpcomingList |
+
+מסך הבית פועל כבר עכשיו עם נתוני דמה (`src/lib/mock-data.ts`), עד שה-onboarding
+וה-seed מחוברים. הצבעים מקודדים סטטוס בלבד, לא דת (§9).
+
 ## פקודות
 
 ```bash
-npm install      # התקנת תלויות
-npm test         # הרצת הבדיקות (vitest)
+npm install        # התקנת תלויות
+npm run dev        # הרצת שרת פיתוח (http://localhost:3000)
+npm run build      # build לפרודקשן
+npm test           # הרצת הבדיקות (vitest)
 npm run typecheck  # בדיקת טיפוסים (tsc --noEmit, strict)
 ```
 
+הגדרת Supabase: העתק `.env.example` ל-`.env.local` ומלא את המפתחות.
+
 ## הבא בתור
 
-שלב 1: seed נותר — ייבוא `schools` ממשרד החינוך ו-`holidays` (Hebcal + ידני), פריט 3.
-לאחר מכן שלב 2: Auth + onboarding.
+- חיבור מסך הבית לנתוני Supabase אמיתיים במקום נתוני הדמה.
+- onboarding מלא (בחירת בית ספר, דתות, תאריך יעד — §8.1).
+- מסך לוח (§8.3), ימים אישיים (§8.4).
+- seed נותר — ייבוא `schools` ממשרד החינוך ו-`holidays` (שלב 1, פריט 3).

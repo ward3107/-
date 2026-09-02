@@ -345,4 +345,12 @@ https://data.gov.il/api/action/datastore_search?resource_id=<ID>&limit=32000
 - `migrations/0002_rls.sql` — הפעלת RLS ומדיניות גישה לכל טבלה.
 - `seed.sql` — seed לחמש הדתות.
 
-**הבא בתור:** seed נותר — ייבוא `schools` ממשרד החינוך ו-`holidays` (פריט 3), ואז שלב 2 (Auth + onboarding).
+**מיושם (תחילת שלב 2):** אפליקציית Next.js 15 — App Router, RTL עברית, Tailwind.
+- `src/app/layout.tsx` — shell עברי RTL + גופן Heebo.
+- `src/app/page.tsx` — מסך הבית (§8.2), מונע מלוגיקת הליבה, כרגע עם נתוני דמה (`src/lib/mock-data.ts`).
+- `src/app/login/` + `src/app/auth/callback/` — flow התחברות Google (§7, scope calendar.events).
+- `src/lib/supabase/` — לקוחות Supabase (browser + server).
+- `src/components/` — HeroCount · ProgressBar · StatCard · UpcomingList.
+
+**הבא בתור:** חיבור מסך הבית ל-Supabase אמיתי, onboarding מלא (§8.1), מסך לוח (§8.3),
+ו-seed נותר — ייבוא `schools` ו-`holidays` (שלב 1, פריט 3).
