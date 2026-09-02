@@ -340,4 +340,9 @@ https://data.gov.il/api/action/datastore_search?resource_id=<ID>&limit=32000
 
 הרצת בדיקות: `npm test` · בדיקת טיפוסים: `npm run typecheck`
 
-**הבא בתור:** סכמת DB + RLS (שלב 1, פריט 2), ואז seed data (פריט 3).
+**מיושם (שלב 1, פריט 2):** `supabase/` — סכמת DB + RLS.
+- `migrations/0001_initial_schema.sql` — כל הטבלאות והאינדקסים (§4), תאריכים כ-`DATE` בלבד.
+- `migrations/0002_rls.sql` — הפעלת RLS ומדיניות גישה לכל טבלה.
+- `seed.sql` — seed לחמש הדתות.
+
+**הבא בתור:** seed נותר — ייבוא `schools` ממשרד החינוך ו-`holidays` (פריט 3), ואז שלב 2 (Auth + onboarding).
