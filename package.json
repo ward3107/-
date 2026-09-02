@@ -1,0 +1,19 @@
+{
+  "name": "kamah-nishar-li",
+  "version": "0.0.1",
+  "private": true,
+  "description": "כמה נשאר לי? — ספירה לאחור בימי לימוד למורים בישראל",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.8"
+  }
+}
