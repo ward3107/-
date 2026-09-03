@@ -33,15 +33,40 @@ supabase db push          # מריץ את המיגרציות
 psql "$DATABASE_URL" -f supabase/seed.sql   # או דרך ה-SQL editor
 ```
 
+מיושם **תחילת שלב 2** — אפליקציית Next.js 15 (App Router, RTL עברית, Tailwind):
+
+| נתיב | תוכן |
+|------|------|
+| `src/app/layout.tsx` | shell עברי RTL + גופן Heebo |
+| `src/app/page.tsx` | מסך הבית (§8.2) — מונע מלוגיקת הליבה, כרגע עם נתוני דמה |
+| `src/app/login/page.tsx` + `src/app/auth/callback/route.ts` | flow התחברות Google (§7, scope calendar.events) |
+| `src/app/onboarding/` | אשף onboarding (§8.1) — בחירת בי"ס, דתות, תאריך יעד |
+| `src/app/calendar/` | מסך לוח (§8.3) — תצוגת חודש, כותרת כפולה, 3 קטגוריות צבע |
+| `src/app/profile/` | מסך פרופיל (§8.4) — פרטי המורה וערכת נושא (עריכה בקרוב) |
+| `src/lib/supabase/` | לקוחות Supabase (browser + server) + middleware לרענון סשן |
+| `src/components/` | HeroCount · ProgressBar · StatCard · UpcomingList · MonthCalendar · BottomNav |
+
+מסך הבית פועל כבר עכשיו עם נתוני דמה (`src/lib/mock-data.ts`), עד שה-onboarding
+וה-seed מחוברים. הצבעים מקודדים סטטוס בלבד, לא דת (§9).
+
 ## פקודות
 
 ```bash
-npm install      # התקנת תלויות
-npm test         # הרצת הבדיקות (vitest)
+npm install        # התקנת תלויות
+npm run dev        # הרצת שרת פיתוח (http://localhost:3000)
+npm run build      # build לפרודקשן
+npm test           # הרצת הבדיקות (vitest)
 npm run typecheck  # בדיקת טיפוסים (tsc --noEmit, strict)
 ```
 
+הגדרת Supabase: העתק `.env.example` ל-`.env.local` ומלא את המפתחות.
+
+אשף ה-onboarding עובד עם נתוני דמה (`src/lib/schools.ts`) כשאין פרויקט Supabase מחובר,
+ומתחבר אוטומטית ל-`schools` האמיתיים כשיש קרדנציאלס.
+
 ## הבא בתור
 
-שלב 1: seed נותר — ייבוא `schools` ממשרד החינוך ו-`holidays` (Hebcal + ידני), פריט 3.
-לאחר מכן שלב 2: Auth + onboarding.
+- חיבור כל המסכים לנתוני Supabase אמיתיים (המורה שהתחבר) במקום נתוני הדמה.
+- פרופיל מלא + עריכה + ימים אישיים (§8.4): הוספה/מחיקה של `custom_days`.
+- seed נותר — ייבוא `schools` ממשרד החינוך ו-`holidays` (שלב 1, פריט 3).
+- סנכרון Google Calendar + cron יומי (§7, שלב 3).

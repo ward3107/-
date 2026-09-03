@@ -345,4 +345,15 @@ https://data.gov.il/api/action/datastore_search?resource_id=<ID>&limit=32000
 - `migrations/0002_rls.sql` — הפעלת RLS ומדיניות גישה לכל טבלה.
 - `seed.sql` — seed לחמש הדתות.
 
-**הבא בתור:** seed נותר — ייבוא `schools` ממשרד החינוך ו-`holidays` (פריט 3), ואז שלב 2 (Auth + onboarding).
+**מיושם (תחילת שלב 2):** אפליקציית Next.js 15 — App Router, RTL עברית, Tailwind.
+- `src/app/layout.tsx` — shell עברי RTL + גופן Heebo.
+- `src/app/page.tsx` — מסך הבית (§8.2), מונע מלוגיקת הליבה, כרגע עם נתוני דמה (`src/lib/mock-data.ts`).
+- `src/app/login/` + `src/app/auth/callback/` — flow התחברות Google (§7, scope calendar.events).
+- `src/app/onboarding/` — אשף בחירת בי"ס (§11.4 — בחירה מרשימה בלבד), דתות (multi-select), תאריך יעד נגזר (§8.1).
+- `src/app/calendar/` — מסך לוח (§8.3): תצוגת חודש, כותרת כפולה (לועזי + עברי), סרגל סיכום, 3 קטגוריות צבע, כרטיס פרטי יום.
+- `src/app/profile/` — מסך פרופיל (§8.4) ראשוני: פרטי המורה + ערכת נושא (עריכה בקרוב).
+- `src/lib/supabase/` — לקוחות Supabase (browser + server) + middleware לרענון סשן.
+- `src/components/` — HeroCount · ProgressBar · StatCard · UpcomingList · MonthCalendar · BottomNav.
+
+**הבא בתור:** חיבור המסכים ל-Supabase אמיתי (המורה המחובר), פרופיל מלא + ימים אישיים (§8.4),
+ו-seed נותר — ייבוא `schools` ו-`holidays` (שלב 1, פריט 3).
