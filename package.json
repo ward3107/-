@@ -10,7 +10,9 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "seed:holidays": "node scripts/gen-holidays-seed.mjs > supabase/seed_holidays_2026-27.sql",
+    "seed:schools": "node scripts/seed-schools.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
