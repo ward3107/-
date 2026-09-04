@@ -21,20 +21,18 @@ if (!SUPABASE_URL || !SERVICE_KEY) {
   process.exit(1);
 }
 
+// שלב החינוך נגזר מטווח השכבות (משכבה → עד שכבה), לא מסוג המוסד.
+// 1-6 → יסודי · 7-9 → חטיבת ביניים · 10+ → על-יסודי.
 function mapStage(row) {
-  const t = `${row['סוג מוסד'] ?? ''} ${row['סוג חינוך מוסד'] ?? ''}`;
-  if (t.includes('גן')) return null; // גני ילדים — מחוץ לסקופ הנוכחי
-  if (t.includes('חטיבת ביניים') || t.includes('חט"ב')) return 'חטיבת ביניים';
-  if (
-    t.includes('על יסודי') ||
-    t.includes('על-יסודי') ||
-    t.includes('חטיבה עליונה') ||
-    t.includes('תיכון')
-  ) {
-    return 'על-יסודי';
-  }
-  if (t.includes('יסודי')) return 'יסודי';
-  return null;
+  const from = parseFloat(row['משכבה']);
+  const to = parseFloat(row['עד שכבה']);
+  if (!Number.isFinite(to) || to <= 0) return null; // גנים/מוסדות ללא שכבות
+  if (to <= 6) return 'יסודי';
+  if (from >= 7 && to <= 9) return 'חטיבת ביניים';
+  if (to >= 10) return 'על-יסודי';
+  // טווחים משולבים (למשל 1-8, 1-9): מסתיימים עד ח׳/ט׳ ומתחילים ביסודי.
+  if (from <= 6) return 'יסודי';
+  return 'חטיבת ביניים';
 }
 
 async function fetchAll() {
