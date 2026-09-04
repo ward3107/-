@@ -1,43 +1,32 @@
 import type { CSSProperties } from 'react';
-import {
-  calculateCountdown,
-  getClosedDates,
-  getPersonalDates,
-  getSchoolYear,
-  inferTargetDate,
-  schoolYearStart,
-} from '@/lib/domain';
+import { calculateCountdown, getClosedDates, getPersonalDates } from '@/lib/domain';
 import { themeColorValue } from '@/lib/theme';
-import { MOCK_CUSTOM_DAYS, MOCK_HOLIDAYS, MOCK_TEACHER } from '@/lib/mock-data';
+import { getScreenModel } from '@/lib/data/screen';
 import { MonthCalendar } from '@/components/MonthCalendar';
 import { StatCard } from '@/components/StatCard';
 import { BottomNav } from '@/components/BottomNav';
 
 export const dynamic = 'force-dynamic';
 
-export default function CalendarPage() {
+export default async function CalendarPage() {
   const today = new Date();
-  const { endYear } = getSchoolYear(today);
+  const model = await getScreenModel();
 
-  // TODO: להחליף בנתוני המורה האמיתיים מ-Supabase.
-  const target = inferTargetDate(MOCK_TEACHER.educationStage, endYear);
-  const yearStart = schoolYearStart(endYear);
-  const closedDates = getClosedDates(MOCK_HOLIDAYS);
-  const personalDates = getPersonalDates(MOCK_CUSTOM_DAYS);
+  const closedDates = getClosedDates(model.holidays);
+  const personalDates = getPersonalDates(model.customDays);
 
   const countdown = calculateCountdown({
     from: today,
-    target,
+    target: model.target,
     closedDates,
     personalDates,
-    yearStart,
+    yearStart: model.yearStart,
   });
 
-  const remainingClosed = closedDates.filter(
-    (d) => d.getTime() >= new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime(),
-  ).length;
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+  const remainingClosed = closedDates.filter((d) => d.getTime() >= startOfToday).length;
 
-  const themeStyle = { '--theme': themeColorValue(MOCK_TEACHER.themeColor) } as CSSProperties;
+  const themeStyle = { '--theme': themeColorValue(model.themeColor) } as CSSProperties;
 
   return (
     <main style={themeStyle} className="mx-auto flex min-h-screen max-w-md flex-col gap-4 p-4 pb-28">
@@ -52,7 +41,7 @@ export default function CalendarPage() {
         <StatCard label="עד הקיץ" value={countdown.calendarDays} />
       </div>
 
-      <MonthCalendar holidays={MOCK_HOLIDAYS} customDays={MOCK_CUSTOM_DAYS} />
+      <MonthCalendar holidays={model.holidays} customDays={model.customDays} />
 
       <BottomNav />
     </main>

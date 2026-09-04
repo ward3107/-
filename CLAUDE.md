@@ -355,5 +355,11 @@ https://data.gov.il/api/action/datastore_search?resource_id=<ID>&limit=32000
 - `src/lib/supabase/` — לקוחות Supabase (browser + server) + middleware לרענון סשן.
 - `src/components/` — HeroCount · ProgressBar · StatCard · UpcomingList · MonthCalendar · BottomNav.
 
-**הבא בתור:** חיבור המסכים ל-Supabase אמיתי (המורה המחובר), פרופיל מלא + ימים אישיים (§8.4),
+**מיושם:** חיבור המסכים ל-Supabase אמיתי.
+- `src/lib/data/teacher.ts` — טעינת המורה המחובר (teacher + school + religions + holidays + custom_days) דרך RLS.
+- `src/lib/data/screen.ts` — מודל מסך אחיד; מפנה ל-login/onboarding לפי מצב ההתחברות, ונופל לנתוני דמה כשאין קרדנציאלס.
+- מסכי בית/לוח/פרופיל מוזנים מהמודל הזה.
+- `supabase/setup_all.sql` — schema+RLS+seed מאוחדים להרצה חד-פעמית ב-SQL editor.
+
+**הבא בתור:** הפעלת Google provider ב-Supabase, פרופיל מלא + ימים אישיים (§8.4),
 ו-seed נותר — ייבוא `schools` ו-`holidays` (שלב 1, פריט 3).

@@ -1,24 +1,24 @@
 import type { CSSProperties } from 'react';
-import { getSchoolYear, inferTargetDate } from '@/lib/domain';
 import { themeColorValue, THEME_COLORS } from '@/lib/theme';
-import { MOCK_TEACHER } from '@/lib/mock-data';
+import { getScreenModel } from '@/lib/data/screen';
 import { BottomNav } from '@/components/BottomNav';
 
 export const dynamic = 'force-dynamic';
 
-export default function ProfilePage() {
-  const { endYear } = getSchoolYear(new Date());
-  const target = inferTargetDate(MOCK_TEACHER.educationStage, endYear);
-  const themeStyle = { '--theme': themeColorValue(MOCK_TEACHER.themeColor) } as CSSProperties;
+export default async function ProfilePage() {
+  const model = await getScreenModel();
+  const themeStyle = { '--theme': themeColorValue(model.themeColor) } as CSSProperties;
 
   const rows: { label: string; value: string }[] = [
-    { label: 'בית ספר', value: MOCK_TEACHER.schoolName },
-    { label: 'שלב חינוך', value: MOCK_TEACHER.educationStage },
+    { label: 'בית ספר', value: model.schoolName || '—' },
+    { label: 'שלב חינוך', value: model.educationStage },
     {
       label: 'תאריך יעד',
-      value: new Intl.DateTimeFormat('he', { day: 'numeric', month: 'long', year: 'numeric' }).format(
-        target,
-      ),
+      value: new Intl.DateTimeFormat('he', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      }).format(model.target),
     },
   ];
 
@@ -26,7 +26,7 @@ export default function ProfilePage() {
     <main style={themeStyle} className="mx-auto flex min-h-screen max-w-md flex-col gap-4 p-4 pb-28">
       <header className="pt-4">
         <h1 className="text-xl font-bold text-slate-800">הפרופיל שלי</h1>
-        <p className="text-sm text-slate-500">{MOCK_TEACHER.fullName}</p>
+        <p className="text-sm text-slate-500">{model.teacherName}</p>
       </header>
 
       <div className="flex flex-col gap-2 rounded-card bg-white p-4 shadow-sm">
@@ -45,11 +45,11 @@ export default function ProfilePage() {
             <span
               key={code}
               aria-label={code}
-              className="h-8 w-8 rounded-full ring-2"
+              className="h-8 w-8 rounded-full"
               style={{
                 backgroundColor: hex,
                 boxShadow:
-                  code === MOCK_TEACHER.themeColor ? '0 0 0 2px white, 0 0 0 4px var(--theme)' : undefined,
+                  code === model.themeColor ? '0 0 0 2px white, 0 0 0 4px var(--theme)' : undefined,
               }}
             />
           ))}

@@ -4,53 +4,46 @@ import {
   calculateCountdown,
   getClosedDates,
   getPersonalDates,
-  getSchoolYear,
-  inferTargetDate,
-  schoolYearStart,
 } from '@/lib/domain';
 import { themeColorValue } from '@/lib/theme';
 import { dailyMotivation } from '@/lib/motivation';
-import { MOCK_CUSTOM_DAYS, MOCK_HOLIDAYS, MOCK_TEACHER } from '@/lib/mock-data';
+import { getScreenModel } from '@/lib/data/screen';
 import { HeroCount } from '@/components/HeroCount';
 import { ProgressBar } from '@/components/ProgressBar';
 import { StatCard } from '@/components/StatCard';
 import { UpcomingList } from '@/components/UpcomingList';
 import { BottomNav } from '@/components/BottomNav';
 
-// המסך תלוי בתאריך הנוכחי → מתרנדר לכל בקשה.
+// המסך תלוי בתאריך הנוכחי ובמורה המחובר → מתרנדר לכל בקשה.
 export const dynamic = 'force-dynamic';
 
-export default function HomePage() {
+export default async function HomePage() {
   const today = new Date();
-  const { endYear, label } = getSchoolYear(today);
+  const model = await getScreenModel();
 
-  // TODO: להחליף בנתוני המורה האמיתיים מ-Supabase לאחר onboarding + seed.
-  const target = inferTargetDate(MOCK_TEACHER.educationStage, endYear);
-  const yearStart = schoolYearStart(endYear);
-
-  const closedDates = getClosedDates(MOCK_HOLIDAYS);
-  const personalDates = getPersonalDates(MOCK_CUSTOM_DAYS);
+  const closedDates = getClosedDates(model.holidays);
+  const personalDates = getPersonalDates(model.customDays);
 
   const countdown = calculateCountdown({
     from: today,
-    target,
+    target: model.target,
     closedDates,
     personalDates,
-    yearStart,
+    yearStart: model.yearStart,
   });
 
-  const upcoming = buildUpcoming(today, MOCK_HOLIDAYS, MOCK_CUSTOM_DAYS, 5);
-  const remainingClosed = closedDates.filter((d) => d.getTime() >= startOfDay(today).getTime())
-    .length;
+  const upcoming = buildUpcoming(today, model.holidays, model.customDays, 5);
+  const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+  const remainingClosed = closedDates.filter((d) => d.getTime() >= startOfToday).length;
 
-  const themeStyle = { '--theme': themeColorValue(MOCK_TEACHER.themeColor) } as CSSProperties;
+  const themeStyle = { '--theme': themeColorValue(model.themeColor) } as CSSProperties;
 
   return (
     <main style={themeStyle} className="mx-auto flex min-h-screen max-w-md flex-col gap-4 p-4 pb-28">
       <header className="pt-4">
-        <p className="text-sm font-medium text-slate-400">שנת הלימודים {label}</p>
-        <h1 className="text-xl font-bold text-slate-800">שלום, {MOCK_TEACHER.fullName}</h1>
-        <p className="text-sm text-slate-500">{MOCK_TEACHER.schoolName}</p>
+        <p className="text-sm font-medium text-slate-400">שנת הלימודים {model.label}</p>
+        <h1 className="text-xl font-bold text-slate-800">שלום, {model.teacherName}</h1>
+        {model.schoolName && <p className="text-sm text-slate-500">{model.schoolName}</p>}
       </header>
 
       <HeroCount schoolDays={countdown.schoolDays} />
@@ -83,8 +76,4 @@ export default function HomePage() {
       <BottomNav />
     </main>
   );
-}
-
-function startOfDay(date: Date): Date {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
 }
