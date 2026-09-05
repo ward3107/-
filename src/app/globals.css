@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -65,4 +66,51 @@ body {
     color: #fff;
     box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--theme) 80%, transparent);
   }
+
+  /* תא יום בלוח (רקע ניטרלי) — מתחלף במצב כהה */
+  .cal-cell {
+    background: rgba(255, 255, 255, 0.5);
+    color: #1f2430;
+  }
+}
+
+/* ============ מצב כהה (dark mode) ============ */
+:root {
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  color: #e5e7eb;
+  background: #0b1220;
+}
+
+html.dark .app-bg {
+  background:
+    radial-gradient(55rem 55rem at 108% -12%, color-mix(in srgb, var(--theme) 34%, transparent),
+      transparent 60%),
+    radial-gradient(45rem 45rem at -12% 8%, color-mix(in srgb, var(--theme) 22%, transparent),
+      transparent 60%),
+    radial-gradient(40rem 40rem at 50% 120%, color-mix(in srgb, var(--theme) 18%, transparent),
+      transparent 55%),
+    linear-gradient(180deg, #0b1220 0%, #0a0f1a 100%);
+}
+
+html.dark .glass {
+  background: rgba(30, 41, 59, 0.55);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 12px 40px -16px rgba(0, 0, 0, 0.6);
+}
+
+html.dark .glass-soft {
+  background: rgba(30, 41, 59, 0.42);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+html.dark .cal-cell {
+  background: rgba(255, 255, 255, 0.06);
+  color: #e5e7eb;
 }

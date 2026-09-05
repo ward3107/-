@@ -2,9 +2,11 @@
 
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { WaveHeader } from '@/components/WaveHeader';
+import { AppIcon } from '@/components/AppIcon';
 
 /**
- * מסך התחברות (CLAUDE.md §8.1) — עיצוב זכוכית מינימליסטי בסגנון iOS.
+ * מסך התחברות (CLAUDE.md §8.1) — עיצוב Stitch: באנר נוף + כרטיסים רכים ומעוגלים.
  * אותו OAuth של גוגל משמש גם לגישה ליומן — scope calendar.events (§7).
  */
 export default function LoginPage() {
@@ -24,35 +26,64 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="relative flex min-h-screen flex-col items-center justify-center p-6">
+    <main className="mx-auto min-h-screen max-w-md pb-10">
       <div className="app-bg" aria-hidden />
 
-      <div className="glass w-full max-w-sm rounded-[36px] px-7 py-10 text-center">
-        <div
-          className="mx-auto mb-6 grid h-20 w-20 place-items-center rounded-[28px] text-4xl"
-          style={{ background: 'var(--theme)', boxShadow: '0 14px 30px -10px var(--theme)' }}
-        >
-          <span aria-hidden>🎒</span>
+      {/* באנר Stitch: נוף מתחלף + גלים מונפשים */}
+      <WaveHeader />
+
+      <div className="-mt-4 flex flex-col gap-4 p-5">
+        {/* כרטיס ראשי */}
+        <div className="relative overflow-hidden rounded-3xl border border-slate-100 bg-gradient-to-br from-white via-white to-emerald-50/40 p-7 text-center shadow-lg dark:border-slate-700/50 dark:from-slate-800 dark:via-slate-800 dark:to-slate-800/80">
+          <div
+            className="mx-auto mb-5 h-20 w-20"
+            style={{ filter: 'drop-shadow(0 14px 24px rgba(16, 185, 129, 0.35))' }}
+          >
+            <AppIcon size={80} />
+          </div>
+
+          <h1 className="font-display text-3xl font-black tracking-tight text-slate-800 dark:text-slate-100">
+            כמה נשאר לי?
+          </h1>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+            ספירה לאחור בימי לימוד עד סוף השנה — מותאמת לבית הספר ולחגים שלך.
+          </p>
+
+          <button
+            type="button"
+            onClick={signInWithGoogle}
+            disabled={loading}
+            className="mt-7 flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-6 py-3.5 font-bold text-slate-700 shadow-sm ring-1 ring-slate-200 transition-transform active:scale-95 disabled:opacity-60"
+          >
+            <GoogleMark />
+            {loading ? 'מתחבר…' : 'התחברות עם Google'}
+          </button>
+
+          <p className="mt-5 text-xs text-slate-400">
+            נשתמש בחשבון Google גם לסנכרון עתידי ליומן.
+          </p>
         </div>
 
-        <h1 className="text-3xl font-black text-slate-800">כמה נשאר לי?</h1>
-        <p className="mt-2 text-slate-500">
-          ספירה לאחור בימי לימוד עד סוף השנה — מותאמת לבית הספר ולחגים שלך.
-        </p>
-
-        <button
-          type="button"
-          onClick={signInWithGoogle}
-          disabled={loading}
-          className="mt-8 flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-6 py-3.5 font-bold text-slate-700 shadow-sm ring-1 ring-slate-200 transition-transform active:scale-95 disabled:opacity-60"
-        >
-          <GoogleMark />
-          {loading ? 'מתחבר…' : 'התחברות עם Google'}
-        </button>
-
-        <p className="mt-6 text-xs text-slate-400">
-          נשתמש בחשבון Google גם לסנכרון עתידי ליומן.
-        </p>
+        {/* שלושה יתרונות — נגיעה עסיסית בסגנון Stitch */}
+        <div className="grid grid-cols-3 gap-2.5">
+          {[
+            { icon: '🎯', label: 'ספירה חכמה' },
+            { icon: '🎉', label: 'החגים שלך' },
+            { icon: '🗓️', label: 'סנכרון ליומן' },
+          ].map((f) => (
+            <div
+              key={f.label}
+              className="flex flex-col items-center gap-1 rounded-2xl border border-slate-100 bg-white/80 px-2 py-3 text-center shadow-sm dark:border-slate-700 dark:bg-slate-800/70"
+            >
+              <span className="text-xl" aria-hidden>
+                {f.icon}
+              </span>
+              <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300">
+                {f.label}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
     </main>
   );

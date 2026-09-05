@@ -1,5 +1,6 @@
 'use client';
 
+import type { CSSProperties } from 'react';
 import { useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { addMonths, getDay, getDaysInMonth, startOfMonth } from 'date-fns';
@@ -110,19 +111,19 @@ export function MonthCalendar({ items }: { items: CategorizedDay[] }) {
             type="button"
             aria-label="חודש קודם"
             onClick={() => setViewDate((d) => addMonths(d, -1))}
-            className="grid h-9 w-9 place-items-center rounded-full bg-white/70 text-slate-500"
+            className="grid h-9 w-9 place-items-center rounded-full bg-white/70 text-slate-500 dark:bg-white/10 dark:text-slate-300"
           >
             ›
           </button>
           <div className="text-center">
-            <div className="font-bold text-slate-800">{gregorian}</div>
-            <div className="text-xs text-slate-400">{hebrewMonth}</div>
+            <div className="font-bold text-slate-800 dark:text-slate-100">{gregorian}</div>
+            <div className="text-xs text-slate-400 dark:text-slate-500">{hebrewMonth}</div>
           </div>
           <button
             type="button"
             aria-label="חודש הבא"
             onClick={() => setViewDate((d) => addMonths(d, 1))}
-            className="grid h-9 w-9 place-items-center rounded-full bg-white/70 text-slate-500"
+            className="grid h-9 w-9 place-items-center rounded-full bg-white/70 text-slate-500 dark:bg-white/10 dark:text-slate-300"
           >
             ‹
           </button>
@@ -149,20 +150,26 @@ export function MonthCalendar({ items }: { items: CategorizedDay[] }) {
             const isToday = key === todayKey;
             const isSelected = key === selected;
 
+            const cellStyle: CSSProperties = {
+              boxShadow: isSelected ? '0 0 0 2px var(--theme)' : undefined,
+              fontWeight: isToday ? 800 : 500,
+            };
+            if (dominant) {
+              cellStyle.background = `color-mix(in srgb, ${KIND_COLOR[dominant]} 30%, white)`;
+              cellStyle.color = isWeekend ? '#64748b' : '#1f2430';
+            } else if (isWeekend) {
+              cellStyle.color = '#94a3b8';
+            }
+
             return (
               <button
                 key={key}
                 type="button"
                 onClick={() => setSelected(isSelected ? null : key)}
-                className="relative flex aspect-square flex-col items-center justify-center rounded-2xl text-sm transition-transform active:scale-95"
-                style={{
-                  background: dominant
-                    ? `color-mix(in srgb, ${KIND_COLOR[dominant]} 30%, white)`
-                    : 'rgba(255,255,255,0.5)',
-                  color: isWeekend ? '#94a3b8' : '#1f2430',
-                  boxShadow: isSelected ? '0 0 0 2px var(--theme)' : undefined,
-                  fontWeight: isToday ? 800 : 500,
-                }}
+                className={`relative flex aspect-square flex-col items-center justify-center rounded-2xl text-sm transition-transform active:scale-95 ${
+                  dominant ? '' : 'cal-cell'
+                }`}
+                style={cellStyle}
               >
                 <span>{day}</span>
                 {isToday && (
@@ -176,7 +183,7 @@ export function MonthCalendar({ items }: { items: CategorizedDay[] }) {
           })}
         </div>
 
-        <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs text-slate-500">
+        <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs text-slate-500 dark:text-slate-400">
           {KIND_ORDER.map((k) => (
             <span key={k} className="flex items-center gap-1.5">
               <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: KIND_COLOR[k] }} />
@@ -189,7 +196,7 @@ export function MonthCalendar({ items }: { items: CategorizedDay[] }) {
       {selected && (
         <div className="glass rounded-[24px] p-4">
           <div className="mb-3 flex items-center justify-between">
-            <div className="text-sm font-bold text-slate-700">
+            <div className="text-sm font-bold text-slate-700 dark:text-slate-200">
               {new Intl.DateTimeFormat('he', { day: 'numeric', month: 'long' }).format(
                 new Date(selected),
               )}
@@ -198,7 +205,7 @@ export function MonthCalendar({ items }: { items: CategorizedDay[] }) {
           </div>
 
           {selectedEntries.length === 0 ? (
-            <p className="text-sm text-slate-400">אין אירועים ביום זה.</p>
+            <p className="text-sm text-slate-400 dark:text-slate-500">אין אירועים ביום זה.</p>
           ) : (
             <ul className="flex flex-col gap-2">
               {selectedEntries.map((e, idx) => (
@@ -209,7 +216,9 @@ export function MonthCalendar({ items }: { items: CategorizedDay[] }) {
                       style={{ backgroundColor: KIND_COLOR[e.kind] }}
                     />
                     <div className="flex-1">
-                      <div className="text-sm font-semibold text-slate-800">{e.title}</div>
+                      <div className="text-sm font-semibold text-slate-800 dark:text-slate-100">
+                        {e.title}
+                      </div>
                       <div className="text-xs text-slate-400">{KIND_LABEL[e.kind]}</div>
                     </div>
                     {e.customId && (
@@ -217,7 +226,7 @@ export function MonthCalendar({ items }: { items: CategorizedDay[] }) {
                         type="button"
                         onClick={() => removeDay(e.customId!)}
                         disabled={isDeleting}
-                        className="rounded-full px-3 py-1 text-xs font-semibold text-rose-500 ring-1 ring-rose-200 disabled:opacity-50"
+                        className="rounded-full px-3 py-1 text-xs font-semibold text-rose-500 ring-1 ring-rose-200 disabled:opacity-50 dark:ring-rose-400/30"
                       >
                         מחיקה
                       </button>
@@ -230,7 +239,7 @@ export function MonthCalendar({ items }: { items: CategorizedDay[] }) {
                         type="button"
                         onClick={() => renameHoliday(e.holidayId!, e.title)}
                         disabled={isDeleting}
-                        className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200 disabled:opacity-50"
+                        className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200 disabled:opacity-50 dark:bg-white/10 dark:text-slate-300 dark:ring-white/10"
                       >
                         שינוי שם
                       </button>
@@ -238,7 +247,7 @@ export function MonthCalendar({ items }: { items: CategorizedDay[] }) {
                         type="button"
                         onClick={() => moveHoliday(e.holidayId!, selected)}
                         disabled={isDeleting}
-                        className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200 disabled:opacity-50"
+                        className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200 disabled:opacity-50 dark:bg-white/10 dark:text-slate-300 dark:ring-white/10"
                       >
                         שינוי תאריך
                       </button>
@@ -246,7 +255,7 @@ export function MonthCalendar({ items }: { items: CategorizedDay[] }) {
                         type="button"
                         onClick={() => hideHoliday(e.holidayId!)}
                         disabled={isDeleting}
-                        className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-rose-500 ring-1 ring-rose-200 disabled:opacity-50"
+                        className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-rose-500 ring-1 ring-rose-200 disabled:opacity-50 dark:bg-white/10 dark:ring-rose-400/30"
                       >
                         הסתרה
                       </button>

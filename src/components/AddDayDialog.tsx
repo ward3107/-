@@ -48,26 +48,30 @@ export function AddDayDialog({ defaultDate }: { defaultDate?: string }) {
             className="glass w-full max-w-md rounded-[28px] p-5"
             onClick={(e) => e.stopPropagation()}
           >
-            <h3 className="mb-4 text-lg font-bold text-slate-800">הוספת יום משלי</h3>
+            <h3 className="mb-4 text-lg font-bold text-slate-800 dark:text-slate-100">
+              הוספת יום משלי
+            </h3>
 
-            <label className="mb-1 block text-sm font-medium text-slate-500">כותרת</label>
+            <label className="mb-1 block text-sm font-medium text-slate-500 dark:text-slate-400">כותרת</label>
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="למשל: יום כיף, אסיפת הורים"
-              className="mb-3 w-full rounded-2xl bg-white/70 p-3 outline-none ring-1 ring-slate-200 focus:ring-2"
+              className="mb-3 w-full rounded-2xl bg-white/70 p-3 text-slate-800 outline-none ring-1 ring-slate-200 focus:ring-2 dark:bg-white/10 dark:text-slate-100 dark:ring-white/10 dark:placeholder:text-slate-400"
             />
 
-            <label className="mb-1 block text-sm font-medium text-slate-500">תאריך</label>
+            <label className="mb-1 block text-sm font-medium text-slate-500 dark:text-slate-400">תאריך</label>
             <input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
-              className="mb-3 w-full rounded-2xl bg-white/70 p-3 outline-none ring-1 ring-slate-200 focus:ring-2"
+              className="mb-3 w-full rounded-2xl bg-white/70 p-3 text-slate-800 outline-none ring-1 ring-slate-200 focus:ring-2 dark:bg-white/10 dark:text-slate-100 dark:ring-white/10 dark:placeholder:text-slate-400"
             />
 
-            <label className="mb-4 flex items-center justify-between rounded-2xl bg-white/60 p-3">
-              <span className="text-sm text-slate-700">לנכות מספירת ימי הלימוד</span>
+            <label className="mb-4 flex items-center justify-between rounded-2xl bg-white/60 p-3 dark:bg-white/5">
+              <span className="text-sm text-slate-700 dark:text-slate-200">
+                לנכות מספירת ימי הלימוד
+              </span>
               <input
                 type="checkbox"
                 checked={affects}
@@ -80,7 +84,7 @@ export function AddDayDialog({ defaultDate }: { defaultDate?: string }) {
               <button
                 type="button"
                 onClick={() => setOpen(false)}
-                className="flex-1 rounded-full px-4 py-2.5 text-sm font-semibold text-slate-500 ring-1 ring-slate-200"
+                className="flex-1 rounded-full px-4 py-2.5 text-sm font-semibold text-slate-500 ring-1 ring-slate-200 dark:text-slate-300 dark:ring-white/10"
               >
                 ביטול
               </button>
