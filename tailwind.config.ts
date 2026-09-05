@@ -8,10 +8,23 @@ import type { Config } from 'tailwindcss';
  */
 const config: Config = {
   content: ['./src/**/*.{ts,tsx}'],
+  darkMode: 'class',
   theme: {
     extend: {
       fontFamily: {
         sans: ['var(--font-heebo)', 'system-ui', 'sans-serif'],
+        // גופן תצוגה (Stitch) — למספרים ולכותרות גדולות.
+        display: ['Plus Jakarta Sans', 'var(--font-heebo)', 'system-ui', 'sans-serif'],
+      },
+      keyframes: {
+        waveMotion: {
+          '0%': { transform: 'translateX(0) scaleY(1)' },
+          '50%': { transform: 'translateX(-25%) scaleY(1.1)' },
+          '100%': { transform: 'translateX(-50%) scaleY(1)' },
+        },
+      },
+      animation: {
+        wave: 'waveMotion 12s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite',
       },
       borderRadius: {
         // פינות מעוגלות מאוד — 20 עד 32px
