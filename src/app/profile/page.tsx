@@ -2,6 +2,8 @@ import type { CSSProperties } from 'react';
 import { themeColorValue, THEME_COLORS } from '@/lib/theme';
 import { getScreenModel } from '@/lib/data/screen';
 import { BottomNav } from '@/components/BottomNav';
+import { LogoutButton } from '@/components/LogoutButton';
+import { hasSupabaseEnv } from '@/lib/supabase/env';
 
 export const dynamic = 'force-dynamic';
 
@@ -59,6 +61,12 @@ export default async function ProfilePage() {
       <p className="px-1 text-center text-sm text-slate-400">
         עריכת פרטים, דתות, סנכרון יומן וימים אישיים — בקרוב.
       </p>
+
+      {hasSupabaseEnv && (
+        <div className="flex justify-center">
+          <LogoutButton />
+        </div>
+      )}
 
       <BottomNav />
     </main>
