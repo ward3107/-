@@ -355,6 +355,10 @@ https://data.gov.il/api/action/datastore_search?resource_id=<ID>&limit=32000
 - `src/lib/supabase/` — לקוחות Supabase (browser + server) + middleware לרענון סשן.
 - `src/components/` — HeroCount · ProgressBar · StatCard · UpcomingList · MonthCalendar · BottomNav.
 
+**מיושם (ההבחנה של §1):** `school-vacations.ts` — הפרדת שני מקורות ימי החופש:
+חופשות בית הספר לפי **מגזר בית הספר** (`sectorClosureReligionIds`) מול חגים אישיים לפי **דת המורה**
+(חג שביה"ס פתוח בו → יום אישי מנוכה). המספר הראשי = ימי העבודה בפועל של המורה. מכוסה בבדיקות.
+
 **מיושם:** חיבור המסכים ל-Supabase אמיתי.
 - `src/lib/data/teacher.ts` — טעינת המורה המחובר (teacher + school + religions + holidays + custom_days) דרך RLS.
 - `src/lib/data/screen.ts` — מודל מסך אחיד; מפנה ל-login/onboarding לפי מצב ההתחברות, ונופל לנתוני דמה כשאין קרדנציאלס.

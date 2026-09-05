@@ -1,10 +1,5 @@
 import type { CSSProperties } from 'react';
-import {
-  buildUpcoming,
-  calculateCountdown,
-  getClosedDates,
-  getPersonalDates,
-} from '@/lib/domain';
+import { calculateCountdown, categorizeSchoolYear, upcomingFromItems } from '@/lib/domain';
 import { themeColorValue } from '@/lib/theme';
 import { dailyMotivation } from '@/lib/motivation';
 import { getScreenModel } from '@/lib/data/screen';
@@ -21,8 +16,12 @@ export default async function HomePage() {
   const today = new Date();
   const model = await getScreenModel();
 
-  const closedDates = getClosedDates(model.holidays);
-  const personalDates = getPersonalDates(model.customDays);
+  const { closedDates, personalDates, items } = categorizeSchoolYear({
+    sector: model.sector,
+    teacherReligionIds: model.religionIds,
+    holidays: model.holidays,
+    customDays: model.customDays,
+  });
 
   const countdown = calculateCountdown({
     from: today,
@@ -32,7 +31,7 @@ export default async function HomePage() {
     yearStart: model.yearStart,
   });
 
-  const upcoming = buildUpcoming(today, model.holidays, model.customDays, 5);
+  const upcoming = upcomingFromItems(today, items, 5);
   const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
   const inRange = (d: Date) =>
     d.getTime() >= startOfToday && d.getTime() <= model.target.getTime();
