@@ -61,8 +61,12 @@ export async function completeOnboarding(input: OnboardingInput): Promise<void> 
     redirect('/login');
   }
 
+  const meta = user.user_metadata ?? {};
+  const fullName = (meta.full_name as string | undefined) ?? (meta.name as string | undefined) ?? null;
+
   await supabase.from('teachers').upsert({
     id: user.id,
+    full_name: fullName,
     email: user.email,
     school_id: input.schoolId,
     target_date: input.targetDate,

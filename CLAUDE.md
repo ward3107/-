@@ -355,5 +355,16 @@ https://data.gov.il/api/action/datastore_search?resource_id=<ID>&limit=32000
 - `src/lib/supabase/` — לקוחות Supabase (browser + server) + middleware לרענון סשן.
 - `src/components/` — HeroCount · ProgressBar · StatCard · UpcomingList · MonthCalendar · BottomNav.
 
-**הבא בתור:** חיבור המסכים ל-Supabase אמיתי (המורה המחובר), פרופיל מלא + ימים אישיים (§8.4),
-ו-seed נותר — ייבוא `schools` ו-`holidays` (שלב 1, פריט 3).
+**מיושם:** חיבור המסכים ל-Supabase אמיתי.
+- `src/lib/data/teacher.ts` — טעינת המורה המחובר (teacher + school + religions + holidays + custom_days) דרך RLS.
+- `src/lib/data/screen.ts` — מודל מסך אחיד; מפנה ל-login/onboarding לפי מצב ההתחברות, ונופל לנתוני דמה כשאין קרדנציאלס.
+- מסכי בית/לוח/פרופיל מוזנים מהמודל הזה.
+- `supabase/setup_all.sql` — schema+RLS+seed מאוחדים להרצה חד-פעמית ב-SQL editor.
+
+**מיושם (שלב 1, פריט 3 — seed):**
+- `scripts/gen-holidays-seed.mjs` → `supabase/seed_holidays_2026-27.sql` — חגי 2026-27 (יהודי מ-Hebcal, שאר הדתות ידני). `npm run seed:holidays`.
+- `scripts/seed-schools.mjs` — ייבוא `schools` מ-data.gov.il (resource `5548fd63-...`), dedupe לפי שנה אחרונה, מיפוי שלב חינוך; דורש `SUPABASE_SERVICE_ROLE_KEY`. `npm run seed:schools`.
+- ⚠️ `is_school_closed` ב-holidays הוא best-effort; להצליב מול מסמך ימי החופשה של משרד החינוך (§11.3).
+
+**הבא בתור:** הפעלת Google provider ב-Supabase, פרופיל מלא + ימים אישיים (§8.4),
+סנכרון Google Calendar + cron (§7).

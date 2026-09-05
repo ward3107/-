@@ -64,9 +64,21 @@ npm run typecheck  # בדיקת טיפוסים (tsc --noEmit, strict)
 אשף ה-onboarding עובד עם נתוני דמה (`src/lib/schools.ts`) כשאין פרויקט Supabase מחובר,
 ומתחבר אוטומטית ל-`schools` האמיתיים כשיש קרדנציאלס.
 
+## Seed data (שלב 1, פריט 3)
+
+```bash
+# חגים לשנת 2026-27 — מייצר supabase/seed_holidays_2026-27.sql (הדבק ב-SQL editor)
+npm run seed:holidays
+
+# ייבוא בתי ספר ממשרד החינוך — דורש service_role, כותב ישירות ל-DB
+SUPABASE_URL=https://xxxx.supabase.co SUPABASE_SERVICE_ROLE_KEY=... npm run seed:schools
+```
+
+חגים יהודיים נשלפים מ-Hebcal; שאר הדתות ידני ומקורב. `is_school_closed` הוא
+best-effort — יש להצליב מול מסמך ימי החופשה של משרד החינוך (§11.3).
+
 ## הבא בתור
 
-- חיבור כל המסכים לנתוני Supabase אמיתיים (המורה שהתחבר) במקום נתוני הדמה.
+- הפעלת Google provider ב-Supabase (Authentication → Providers) — כדי שהתחברות תעבוד.
 - פרופיל מלא + עריכה + ימים אישיים (§8.4): הוספה/מחיקה של `custom_days`.
-- seed נותר — ייבוא `schools` ממשרד החינוך ו-`holidays` (שלב 1, פריט 3).
 - סנכרון Google Calendar + cron יומי (§7, שלב 3).

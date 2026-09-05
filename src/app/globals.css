@@ -1,28 +1,68 @@
-@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* גופן עברי */
   --font-heebo: 'Heebo';
-  /* צבע ערכת הנושא הנבחר; נדרס בזמן ריצה לפי teacher.theme_color */
+  /* צבע ערכת הנושא; נדרס בזמן ריצה לפי teacher.theme_color */
   --theme: #10b981;
+  --ink: #0b1220;
+  --muted: #6b7280;
 }
 
-html {
-  /* רקע רך; עומק דרך שכבות שקופות, לא גרדיאנטים כבדים (CLAUDE.md §9) */
-  background-color: #f6f7fb;
+html,
+body {
+  height: 100%;
 }
 
 body {
-  color: #1f2430;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', var(--font-heebo), system-ui,
+    sans-serif;
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  background: #eef1f7;
 }
 
-/* שכבת צבע שקופה עדינה של ערכת הנושא, לתחושת "עסיסי" */
-.theme-wash {
-  background: color-mix(in srgb, var(--theme) 8%, transparent);
+@layer components {
+  /* שכבת רקע קבועה, גוונים רכים של ערכת הנושא — אווירת iOS */
+  .app-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(55rem 55rem at 108% -12%, color-mix(in srgb, var(--theme) 42%, transparent),
+        transparent 60%),
+      radial-gradient(45rem 45rem at -12% 8%, color-mix(in srgb, var(--theme) 26%, transparent),
+        transparent 60%),
+      radial-gradient(40rem 40rem at 50% 120%, color-mix(in srgb, var(--theme) 20%, transparent),
+        transparent 55%),
+      linear-gradient(180deg, #f7f8fc 0%, #eaeef6 100%);
+  }
+
+  /* כרטיס זכוכית מט */
+  .glass {
+    background: rgba(255, 255, 255, 0.55);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid rgba(255, 255, 255, 0.65);
+    box-shadow: 0 12px 40px -16px rgba(15, 23, 42, 0.35);
+  }
+
+  .glass-soft {
+    background: rgba(255, 255, 255, 0.42);
+    backdrop-filter: blur(18px) saturate(150%);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+  }
+
+  /* כפתור ראשי בצבע ערכת הנושא */
+  .btn-theme {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--theme) 92%, white),
+      var(--theme));
+    color: #fff;
+    box-shadow: 0 10px 24px -10px color-mix(in srgb, var(--theme) 80%, transparent);
+  }
 }
