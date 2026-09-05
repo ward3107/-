@@ -9,22 +9,28 @@ const ITEMS = [
   { href: '/profile', label: 'פרופיל', icon: '👤' },
 ];
 
+/** סרגל ניווט תחתון צף בסגנון iOS. */
 export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-10 border-t border-slate-100 bg-white/90 backdrop-blur">
-      <ul className="mx-auto flex max-w-md">
+    <nav className="fixed inset-x-0 bottom-0 z-20 flex justify-center px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <ul className="glass flex w-full max-w-xs items-center justify-around rounded-full px-2 py-1.5">
         {ITEMS.map((item) => {
           const active = pathname === item.href;
           return (
-            <li key={item.href} className="flex-1">
+            <li key={item.href}>
               <Link
                 href={item.href}
-                className="flex flex-col items-center gap-0.5 py-2.5 text-xs"
-                style={{ color: active ? 'var(--theme)' : '#94a3b8' }}
+                prefetch
+                className="flex flex-col items-center gap-0.5 rounded-full px-5 py-1.5 text-[11px] font-semibold transition-colors"
+                style={
+                  active
+                    ? { color: '#fff', background: 'var(--theme)' }
+                    : { color: '#64748b' }
+                }
               >
-                <span aria-hidden className="text-lg">
+                <span aria-hidden className="text-base">
                   {item.icon}
                 </span>
                 {item.label}

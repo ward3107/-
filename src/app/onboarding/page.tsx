@@ -59,6 +59,7 @@ export default function OnboardingPage() {
 
   return (
     <main className="mx-auto flex min-h-screen max-w-md flex-col gap-5 p-4 pb-10">
+      <div className="app-bg" aria-hidden />
       <header className="pt-4">
         <h1 className="text-2xl font-extrabold text-slate-800">בואו נתחיל</h1>
         <p className="text-sm text-slate-500">כמה פרטים חד-פעמיים כדי להתאים לך את הספירה.</p>
@@ -74,7 +75,7 @@ export default function OnboardingPage() {
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder="חיפוש לפי שם, יישוב או סמל מוסד"
-            className="rounded-soft bg-white p-4 shadow-sm outline-none ring-1 ring-slate-200 focus:ring-2 focus:ring-slate-300"
+            className="glass rounded-2xl p-4 shadow-sm outline-none ring-1 ring-slate-200 focus:ring-2 focus:ring-slate-300"
           />
           {isSearching && <p className="px-1 text-sm text-slate-400">מחפש…</p>}
           <ul className="flex flex-col gap-2">
@@ -83,7 +84,7 @@ export default function OnboardingPage() {
                 <button
                   type="button"
                   onClick={() => pickSchool(s)}
-                  className="w-full rounded-soft bg-white p-4 text-right shadow-sm ring-1 ring-slate-100 hover:ring-2"
+                  className="w-full glass rounded-2xl p-4 text-right shadow-sm ring-1 ring-slate-100 hover:ring-2"
                 >
                   <div className="font-semibold text-slate-800">{s.name}</div>
                   <div className="text-xs text-slate-400">
@@ -114,7 +115,7 @@ export default function OnboardingPage() {
                   type="button"
                   onClick={() => toggleReligion(r.id)}
                   aria-pressed={selected}
-                  className="flex items-center justify-between rounded-soft bg-white p-4 text-right shadow-sm ring-1 ring-slate-100"
+                  className="flex items-center justify-between glass rounded-2xl p-4 text-right shadow-sm ring-1 ring-slate-100"
                   style={selected ? { boxShadow: '0 0 0 2px var(--theme)' } : undefined}
                 >
                   <span className="font-semibold text-slate-800">{r.name}</span>
@@ -146,9 +147,9 @@ export default function OnboardingPage() {
             type="date"
             value={targetDate}
             onChange={(e) => setTargetDate(e.target.value)}
-            className="rounded-soft bg-white p-4 shadow-sm outline-none ring-1 ring-slate-200 focus:ring-2"
+            className="glass rounded-2xl p-4 shadow-sm outline-none ring-1 ring-slate-200 focus:ring-2"
           />
-          <div className="rounded-soft bg-white p-4 text-sm text-slate-500 shadow-sm">
+          <div className="glass rounded-2xl p-4 text-sm text-slate-500 shadow-sm">
             <div>בית ספר: <span className="font-semibold text-slate-700">{school?.name}</span></div>
             <div>
               דתות:{' '}

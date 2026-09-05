@@ -55,13 +55,19 @@ export async function loadTeacherContext(): Promise<TeacherLoad> {
 
   if (!teacherRow) return { status: 'no-teacher' };
 
-  const { data: religionRows } = await supabase
-    .from('teacher_religions')
-    .select('religion_id')
-    .eq('teacher_id', user.id);
-  const religionIds = (religionRows ?? []).map((r) => r.religion_id as number);
-
   const schoolYear = getSchoolYear(new Date()).label;
+
+  // רץ במקביל — מקצר את זמן הטעינה בכל ניווט.
+  const [religionRes, customRes] = await Promise.all([
+    supabase.from('teacher_religions').select('religion_id').eq('teacher_id', user.id),
+    supabase
+      .from('custom_days')
+      .select('id, title, date, affects_countdown')
+      .eq('teacher_id', user.id)
+      .order('date'),
+  ]);
+
+  const religionIds = (religionRes.data ?? []).map((r) => r.religion_id as number);
 
   let holidays: Holiday[] = [];
   if (religionIds.length > 0) {
@@ -74,12 +80,7 @@ export async function loadTeacherContext(): Promise<TeacherLoad> {
     holidays = (holidayRows ?? []).map(mapHoliday);
   }
 
-  const { data: customRows } = await supabase
-    .from('custom_days')
-    .select('id, title, date, affects_countdown')
-    .eq('teacher_id', user.id)
-    .order('date');
-  const customDays = (customRows ?? []).map(mapCustomDay);
+  const customDays = (customRes.data ?? []).map(mapCustomDay);
 
   return {
     status: 'ok',

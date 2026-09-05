@@ -24,17 +24,20 @@ export default async function CalendarPage() {
   });
 
   const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
-  const remainingClosed = closedDates.filter((d) => d.getTime() >= startOfToday).length;
+  const remainingClosed = closedDates.filter(
+    (d) => d.getTime() >= startOfToday && d.getTime() <= model.target.getTime(),
+  ).length;
 
   const themeStyle = { '--theme': themeColorValue(model.themeColor) } as CSSProperties;
 
   return (
     <main style={themeStyle} className="mx-auto flex min-h-screen max-w-md flex-col gap-4 p-4 pb-28">
+      <div className="app-bg" aria-hidden />
+
       <header className="pt-4">
-        <h1 className="text-xl font-bold text-slate-800">הלוח שלי</h1>
+        <h1 className="text-2xl font-extrabold text-slate-800">הלוח שלי</h1>
       </header>
 
-      {/* סרגל סיכום (CLAUDE.md §8.3) */}
       <div className="grid grid-cols-3 gap-2">
         <StatCard label="ימי לימוד" value={countdown.schoolDays} />
         <StatCard label="ימי חופש" value={remainingClosed} />
