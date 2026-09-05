@@ -17,8 +17,9 @@ export interface TeacherContext {
     themeColor: string;
     targetDate: string | null; // 'yyyy-MM-dd'
   };
-  school: { name: string | null; educationStage: string | null } | null;
+  school: { name: string | null; educationStage: string | null; sector: string | null } | null;
   religionIds: number[];
+  /** כל חגי השנה (כל הדתות) — הסיווג לפי מגזר/דת נעשה בשכבת ה-domain. */
   holidays: Holiday[];
   customDays: CustomDay[];
 }
@@ -31,6 +32,7 @@ export type TeacherLoad =
 interface SchoolJoin {
   name: string | null;
   education_stage: string | null;
+  sector: string | null;
 }
 
 function normalizeSchool(value: unknown): SchoolJoin | null {
@@ -49,7 +51,9 @@ export async function loadTeacherContext(): Promise<TeacherLoad> {
 
   const { data: teacherRow } = await supabase
     .from('teachers')
-    .select('id, full_name, email, theme_color, target_date, school_id, schools(name, education_stage)')
+    .select(
+      'id, full_name, email, theme_color, target_date, school_id, schools(name, education_stage, sector)',
+    )
     .eq('id', user.id)
     .maybeSingle();
 
@@ -58,28 +62,23 @@ export async function loadTeacherContext(): Promise<TeacherLoad> {
   const schoolYear = getSchoolYear(new Date()).label;
 
   // רץ במקביל — מקצר את זמן הטעינה בכל ניווט.
-  const [religionRes, customRes] = await Promise.all([
+  // חגים: נטענים כולם (כל הדתות) לשנה; הסיווג לפי מגזר/דת נעשה ב-domain.
+  const [religionRes, customRes, holidayRes] = await Promise.all([
     supabase.from('teacher_religions').select('religion_id').eq('teacher_id', user.id),
     supabase
       .from('custom_days')
       .select('id, title, date, affects_countdown')
       .eq('teacher_id', user.id)
       .order('date'),
+    supabase
+      .from('holidays')
+      .select('id, religion_id, name, date, school_year, is_school_closed, source')
+      .eq('school_year', schoolYear)
+      .order('date'),
   ]);
 
   const religionIds = (religionRes.data ?? []).map((r) => r.religion_id as number);
-
-  let holidays: Holiday[] = [];
-  if (religionIds.length > 0) {
-    const { data: holidayRows } = await supabase
-      .from('holidays')
-      .select('id, religion_id, name, date, school_year, is_school_closed, source')
-      .in('religion_id', religionIds)
-      .eq('school_year', schoolYear)
-      .order('date');
-    holidays = (holidayRows ?? []).map(mapHoliday);
-  }
-
+  const holidays = (holidayRes.data ?? []).map(mapHoliday);
   const customDays = (customRes.data ?? []).map(mapCustomDay);
 
   return {
@@ -96,6 +95,7 @@ export async function loadTeacherContext(): Promise<TeacherLoad> {
         ? {
             name: normalizeSchool(teacherRow.schools)!.name,
             educationStage: normalizeSchool(teacherRow.schools)!.education_stage,
+            sector: normalizeSchool(teacherRow.schools)!.sector,
           }
         : null,
       religionIds,

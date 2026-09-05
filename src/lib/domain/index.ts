@@ -6,3 +6,4 @@
 export * from './school-days';
 export * from './school-year';
 export * from './holidays';
+export * from './school-vacations';

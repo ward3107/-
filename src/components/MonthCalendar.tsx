@@ -3,7 +3,7 @@
 import { useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { addMonths, getDay, getDaysInMonth, startOfMonth } from 'date-fns';
-import type { CustomDay, Holiday, UpcomingKind } from '@/lib/domain';
+import type { CategorizedDay, UpcomingKind } from '@/lib/domain';
 import { deleteCustomDay } from '@/app/actions';
 import { AddDayDialog } from '@/components/AddDayDialog';
 
@@ -33,13 +33,7 @@ function dateKey(d: Date): string {
   ).padStart(2, '0')}`;
 }
 
-export function MonthCalendar({
-  holidays,
-  customDays,
-}: {
-  holidays: Holiday[];
-  customDays: CustomDay[];
-}) {
+export function MonthCalendar({ items }: { items: CategorizedDay[] }) {
   const router = useRouter();
   const [viewDate, setViewDate] = useState(() => startOfMonth(new Date()));
   const [selected, setSelected] = useState<string | null>(null);
@@ -47,17 +41,13 @@ export function MonthCalendar({
 
   const entries = useMemo(() => {
     const map = new Map<string, DayEntry[]>();
-    const push = (date: string, e: DayEntry) => {
-      const list = map.get(date) ?? [];
-      list.push(e);
-      map.set(date, list);
-    };
-    for (const h of holidays) {
-      push(h.date, { kind: h.isSchoolClosed ? 'school-closed' : 'personal-holiday', title: h.name });
+    for (const it of items) {
+      const list = map.get(it.date) ?? [];
+      list.push({ kind: it.kind, title: it.title, customId: it.customId });
+      map.set(it.date, list);
     }
-    for (const c of customDays) push(c.date, { kind: 'personal-day', title: c.title, customId: c.id });
     return map;
-  }, [holidays, customDays]);
+  }, [items]);
 
   const leadingBlanks = getDay(viewDate);
   const daysInMonth = getDaysInMonth(viewDate);

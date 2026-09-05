@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { calculateCountdown, getClosedDates, getPersonalDates } from '@/lib/domain';
+import { calculateCountdown, categorizeSchoolYear } from '@/lib/domain';
 import { themeColorValue } from '@/lib/theme';
 import { getScreenModel } from '@/lib/data/screen';
 import { MonthCalendar } from '@/components/MonthCalendar';
@@ -12,8 +12,12 @@ export default async function CalendarPage() {
   const today = new Date();
   const model = await getScreenModel();
 
-  const closedDates = getClosedDates(model.holidays);
-  const personalDates = getPersonalDates(model.customDays);
+  const { closedDates, personalDates, items } = categorizeSchoolYear({
+    sector: model.sector,
+    teacherReligionIds: model.religionIds,
+    holidays: model.holidays,
+    customDays: model.customDays,
+  });
 
   const countdown = calculateCountdown({
     from: today,
@@ -44,7 +48,7 @@ export default async function CalendarPage() {
         <StatCard label="עד הקיץ" value={countdown.calendarDays} />
       </div>
 
-      <MonthCalendar holidays={model.holidays} customDays={model.customDays} />
+      <MonthCalendar items={items} />
 
       <BottomNav />
     </main>
