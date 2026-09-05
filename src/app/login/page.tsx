@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { WaveHeader } from '@/components/WaveHeader';
+import { AppIcon } from '@/components/AppIcon';
 
 /**
  * מסך התחברות (CLAUDE.md §8.1) — עיצוב Stitch: באנר נוף + כרטיסים רכים ומעוגלים.
@@ -35,10 +36,10 @@ export default function LoginPage() {
         {/* כרטיס ראשי */}
         <div className="relative overflow-hidden rounded-3xl border border-slate-100 bg-gradient-to-br from-white via-white to-emerald-50/40 p-7 text-center shadow-lg">
           <div
-            className="mx-auto mb-5 grid h-20 w-20 place-items-center rounded-[28px] text-4xl"
-            style={{ background: 'var(--theme)', boxShadow: '0 14px 30px -10px var(--theme)' }}
+            className="mx-auto mb-5 h-20 w-20"
+            style={{ filter: 'drop-shadow(0 14px 24px rgba(16, 185, 129, 0.35))' }}
           >
-            <span aria-hidden>🎒</span>
+            <AppIcon size={80} />
           </div>
 
           <h1 className="font-display text-3xl font-black tracking-tight text-slate-800">
