@@ -34,7 +34,7 @@ export default function LoginPage() {
 
       <div className="-mt-4 flex flex-col gap-4 p-5">
         {/* כרטיס ראשי */}
-        <div className="relative overflow-hidden rounded-3xl border border-slate-100 bg-gradient-to-br from-white via-white to-emerald-50/40 p-7 text-center shadow-lg">
+        <div className="relative overflow-hidden rounded-3xl border border-slate-100 bg-gradient-to-br from-white via-white to-emerald-50/40 p-7 text-center shadow-lg dark:border-slate-700/50 dark:from-slate-800 dark:via-slate-800 dark:to-slate-800/80">
           <div
             className="mx-auto mb-5 h-20 w-20"
             style={{ filter: 'drop-shadow(0 14px 24px rgba(16, 185, 129, 0.35))' }}
@@ -42,10 +42,10 @@ export default function LoginPage() {
             <AppIcon size={80} />
           </div>
 
-          <h1 className="font-display text-3xl font-black tracking-tight text-slate-800">
+          <h1 className="font-display text-3xl font-black tracking-tight text-slate-800 dark:text-slate-100">
             כמה נשאר לי?
           </h1>
-          <p className="mt-2 text-sm text-slate-500">
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
             ספירה לאחור בימי לימוד עד סוף השנה — מותאמת לבית הספר ולחגים שלך.
           </p>
 
@@ -73,12 +73,14 @@ export default function LoginPage() {
           ].map((f) => (
             <div
               key={f.label}
-              className="flex flex-col items-center gap-1 rounded-2xl border border-slate-100 bg-white/80 px-2 py-3 text-center shadow-sm"
+              className="flex flex-col items-center gap-1 rounded-2xl border border-slate-100 bg-white/80 px-2 py-3 text-center shadow-sm dark:border-slate-700 dark:bg-slate-800/70"
             >
               <span className="text-xl" aria-hidden>
                 {f.icon}
               </span>
-              <span className="text-[11px] font-bold text-slate-600">{f.label}</span>
+              <span className="text-[11px] font-bold text-slate-600 dark:text-slate-300">
+                {f.label}
+              </span>
             </div>
           ))}
         </div>

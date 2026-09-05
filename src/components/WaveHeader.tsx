@@ -1,5 +1,6 @@
 'use client';
 import React, { useState } from 'react';
+import { ThemeToggle } from './ThemeToggle';
 
 /**
  * באנר עליון בסגנון Stitch: נוף חופשה מתחלף (טבע בלבד, ללא דמויות)
@@ -51,13 +52,16 @@ export const WaveHeader: React.FC = () => {
           </span>
         </div>
 
-        <button
-          onClick={nextDestination}
-          className="flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-xs font-bold text-slate-700 shadow-sm backdrop-blur-md transition-all hover:bg-white active:scale-95 dark:bg-slate-900/85 dark:text-slate-200"
-        >
-          <span>🎲</span>
-          <span>שנה יעד</span>
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            onClick={nextDestination}
+            className="flex items-center gap-1.5 rounded-full bg-white/90 px-3 py-1.5 text-xs font-bold text-slate-700 shadow-sm backdrop-blur-md transition-all hover:bg-white active:scale-95 dark:bg-slate-900/85 dark:text-slate-200"
+          >
+            <span>🎲</span>
+            <span>שנה יעד</span>
+          </button>
+        </div>
       </div>
 
       {/* תגית שם היעד */}

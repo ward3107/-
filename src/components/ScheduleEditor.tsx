@@ -14,6 +14,9 @@ const DAYS = [
   { v: 5, label: 'ו׳' },
 ];
 
+const INACTIVE =
+  'bg-white/70 text-slate-600 dark:bg-white/10 dark:text-slate-300';
+
 /** עריכת לוח הזמנים: מספר ימי לימוד בשבוע + יום חופש שבועי. */
 export function ScheduleEditor({
   schoolWeek,
@@ -41,43 +44,47 @@ export function ScheduleEditor({
   return (
     <div className="flex flex-col gap-3">
       <div className="flex gap-2">
-        {([5, 6] as const).map((w) => (
-          <button
-            key={w}
-            type="button"
-            disabled={isSaving}
-            onClick={() => save(w, w === 5 && off === 5 ? null : off)}
-            className="flex-1 rounded-2xl py-2.5 text-sm font-bold disabled:opacity-60"
-            style={
-              week === w
-                ? { background: 'var(--theme)', color: '#fff' }
-                : { background: 'rgba(255,255,255,0.6)', color: '#475569' }
-            }
-          >
-            {w === 5 ? '5 ימים' : '6 ימים'}
-          </button>
-        ))}
+        {([5, 6] as const).map((w) => {
+          const active = week === w;
+          return (
+            <button
+              key={w}
+              type="button"
+              disabled={isSaving}
+              onClick={() => save(w, w === 5 && off === 5 ? null : off)}
+              className={`flex-1 rounded-2xl py-2.5 text-sm font-bold disabled:opacity-60 ${
+                active ? 'text-white' : INACTIVE
+              }`}
+              style={active ? { background: 'var(--theme)' } : undefined}
+            >
+              {w === 5 ? '5 ימים' : '6 ימים'}
+            </button>
+          );
+        })}
       </div>
 
       <div>
-        <div className="mb-1.5 text-xs font-medium text-slate-500">יום חופש שבועי</div>
+        <div className="mb-1.5 text-xs font-medium text-slate-500 dark:text-slate-400">
+          יום חופש שבועי
+        </div>
         <div className="flex flex-wrap gap-2">
-          {dayOptions.map((opt) => (
-            <button
-              key={String(opt.v)}
-              type="button"
-              disabled={isSaving}
-              onClick={() => save(week, opt.v)}
-              className="rounded-full px-3.5 py-1.5 text-sm font-semibold disabled:opacity-60"
-              style={
-                off === opt.v
-                  ? { background: 'var(--theme)', color: '#fff' }
-                  : { background: 'rgba(255,255,255,0.6)', color: '#475569' }
-              }
-            >
-              {opt.label}
-            </button>
-          ))}
+          {dayOptions.map((opt) => {
+            const active = off === opt.v;
+            return (
+              <button
+                key={String(opt.v)}
+                type="button"
+                disabled={isSaving}
+                onClick={() => save(week, opt.v)}
+                className={`rounded-full px-3.5 py-1.5 text-sm font-semibold disabled:opacity-60 ${
+                  active ? 'text-white' : INACTIVE
+                }`}
+                style={active ? { background: 'var(--theme)' } : undefined}
+              >
+                {opt.label}
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

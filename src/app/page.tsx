@@ -80,9 +80,15 @@ export default async function HomePage() {
 
       <div className="flex flex-col gap-4 p-4">
         <header>
-          <p className="text-sm font-medium text-slate-500">שנת הלימודים {model.label}</p>
-          <h1 className="text-2xl font-extrabold text-slate-800">שלום, {model.teacherName}</h1>
-          {model.schoolName && <p className="text-sm text-slate-500">{model.schoolName}</p>}
+          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+            שנת הלימודים {model.label}
+          </p>
+          <h1 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100">
+            שלום, {model.teacherName}
+          </h1>
+          {model.schoolName && (
+            <p className="text-sm text-slate-500 dark:text-slate-400">{model.schoolName}</p>
+          )}
         </header>
 
         <TeacherToggleCard />
@@ -103,7 +109,9 @@ export default async function HomePage() {
 
         <section className="mt-2 flex flex-col gap-2">
           <div className="flex items-center justify-between px-1">
-            <h2 className="text-base font-extrabold text-slate-700">הימים הקרובים</h2>
+            <h2 className="text-base font-extrabold text-slate-700 dark:text-slate-200">
+              הימים הקרובים
+            </h2>
             <AddDayDialog />
           </div>
           <UpcomingList items={upcoming} />

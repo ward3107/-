@@ -19,7 +19,7 @@ export function LogoutButton() {
       type="button"
       onClick={signOut}
       disabled={isPending}
-      className="rounded-full px-5 py-2.5 text-sm font-semibold text-slate-500 ring-1 ring-slate-200 disabled:opacity-50"
+      className="rounded-full px-5 py-2.5 text-sm font-semibold text-slate-500 ring-1 ring-slate-200 disabled:opacity-50 dark:text-slate-300 dark:ring-white/10"
     >
       {isPending ? 'מתנתק…' : 'התנתקות'}
     </button>

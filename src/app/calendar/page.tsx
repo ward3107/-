@@ -5,6 +5,7 @@ import { getScreenModel } from '@/lib/data/screen';
 import { MonthCalendar } from '@/components/MonthCalendar';
 import { StatCard } from '@/components/StatCard';
 import { BottomNav } from '@/components/BottomNav';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,8 +41,9 @@ export default async function CalendarPage() {
     <main style={themeStyle} className="mx-auto flex min-h-screen max-w-md flex-col gap-4 p-4 pb-28">
       <div className="app-bg" aria-hidden />
 
-      <header className="pt-4">
-        <h1 className="text-2xl font-extrabold text-slate-800">הלוח שלי</h1>
+      <header className="flex items-center justify-between pt-4">
+        <h1 className="text-2xl font-extrabold text-slate-800 dark:text-slate-100">הלוח שלי</h1>
+        <ThemeToggle />
       </header>
 
       <div className="grid grid-cols-3 gap-2">

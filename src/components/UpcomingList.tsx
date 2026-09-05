@@ -15,7 +15,7 @@ const KIND_META: Record<UpcomingKind, { label: string; color: string }> = {
 export function UpcomingList({ items }: { items: UpcomingItem[] }) {
   if (items.length === 0) {
     return (
-      <div className="glass rounded-[22px] p-5 text-center text-sm text-slate-500">
+      <div className="glass rounded-[22px] p-5 text-center text-sm text-slate-500 dark:text-slate-400">
         אין ימים קרובים ברשימה.
       </div>
     );
@@ -36,10 +36,13 @@ export function UpcomingList({ items }: { items: UpcomingItem[] }) {
               aria-hidden
             />
             <div className="flex-1">
-              <div className="font-semibold text-slate-800">{item.title}</div>
-              <div className="text-xs text-slate-400">{meta.label}</div>
+              <div className="font-semibold text-slate-800 dark:text-slate-100">{item.title}</div>
+              <div className="text-xs text-slate-400 dark:text-slate-500">{meta.label}</div>
             </div>
-            <time className="text-sm font-semibold text-slate-500" dateTime={item.date}>
+            <time
+              className="text-sm font-semibold text-slate-500 dark:text-slate-300"
+              dateTime={item.date}
+            >
               {format(item.dateObj, 'd בMMMM', { locale: he })}
             </time>
           </li>
