@@ -43,6 +43,8 @@ export interface OnboardingInput {
   religionIds: number[];
   targetDate: string; // 'yyyy-MM-dd'
   themeColor: string;
+  schoolWeek: number; // 5 או 6
+  dayOff: number | null; // 0=ראשון … 6=שבת; null=אין
 }
 
 /** שומר את פרופיל המורה בסיום ה-onboarding (§8.1). */
@@ -71,6 +73,8 @@ export async function completeOnboarding(input: OnboardingInput): Promise<void> 
     school_id: input.schoolId,
     target_date: input.targetDate,
     theme_color: input.themeColor,
+    school_week: input.schoolWeek === 6 ? 6 : 5,
+    day_off: input.dayOff,
   });
 
   // teacher_religions: מוחקים ומכניסים מחדש (multi-select).

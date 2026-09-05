@@ -156,6 +156,41 @@ describe('calculateCountdown — קצוות', () => {
   });
 });
 
+describe('calculateCountdown — שבוע 6 ימים ויום חופש שבועי', () => {
+  it('שבוע 6 ימים כולל שישי → 6 ימי לימוד בשבוע', () => {
+    const r = calculateCountdown({
+      from: SUN_MAR_1,
+      target: SAT_MAR_7,
+      closedDates: [],
+      personalDates: [],
+      schoolDaysOfWeek: [0, 1, 2, 3, 4, 5],
+    });
+    expect(r.schoolDays).toBe(6);
+  });
+
+  it('יום חופש שבועי (שלישי) מנוכה מכל שבוע', () => {
+    const r = calculateCountdown({
+      from: SUN_MAR_1,
+      target: SAT_MAR_7,
+      closedDates: [],
+      personalDates: [],
+      weeklyDayOff: 2, // שלישי
+    });
+    expect(r.schoolDays).toBe(4);
+  });
+
+  it('יום החופש השבועי אינו מנוכה פעמיים עם חג באותו יום', () => {
+    const r = calculateCountdown({
+      from: SUN_MAR_1,
+      target: SAT_MAR_7,
+      closedDates: [TUE_MAR_3],
+      personalDates: [],
+      weeklyDayOff: 2,
+    });
+    expect(r.schoolDays).toBe(4);
+  });
+});
+
 describe('calculateCountdown — percentComplete', () => {
   it('מחשב אחוז ימי לימוד שעברו כאשר yearStart מסופק', () => {
     // yearStart..target = שבועיים = 10 ימי לימוד; from = ראשון השני → נותרו 5.

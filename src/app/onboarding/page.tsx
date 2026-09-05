@@ -19,6 +19,8 @@ export default function OnboardingPage() {
   const [school, setSchool] = useState<School | null>(null);
   const [religionIds, setReligionIds] = useState<number[]>([]);
   const [targetDate, setTargetDate] = useState('');
+  const [schoolWeek, setSchoolWeek] = useState<5 | 6>(5);
+  const [dayOff, setDayOff] = useState<number | null>(null);
   const [isSearching, startSearch] = useTransition();
   const [isSaving, startSave] = useTransition();
 
@@ -51,6 +53,8 @@ export default function OnboardingPage() {
       religionIds,
       targetDate,
       themeColor: 'emerald',
+      schoolWeek,
+      dayOff,
     };
     startSave(async () => {
       await completeOnboarding(input);
@@ -149,6 +153,64 @@ export default function OnboardingPage() {
             onChange={(e) => setTargetDate(e.target.value)}
             className="glass rounded-2xl p-4 shadow-sm outline-none ring-1 ring-slate-200 focus:ring-2"
           />
+          {/* מספר ימי לימוד בשבוע */}
+          <div>
+            <label className="text-base font-bold text-slate-700">שבוע הלימודים בבית הספר</label>
+            <div className="mt-2 flex gap-2">
+              {([5, 6] as const).map((w) => (
+                <button
+                  key={w}
+                  type="button"
+                  onClick={() => {
+                    setSchoolWeek(w);
+                    if (w === 5 && dayOff === 5) setDayOff(null);
+                  }}
+                  aria-pressed={schoolWeek === w}
+                  className="flex-1 rounded-2xl py-3 text-sm font-bold"
+                  style={
+                    schoolWeek === w
+                      ? { background: 'var(--theme)', color: '#fff' }
+                      : { background: 'rgba(255,255,255,0.6)', color: '#475569' }
+                  }
+                >
+                  {w === 5 ? '5 ימים (א׳–ה׳)' : '6 ימים (א׳–ו׳)'}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* יום חופש שבועי קבוע */}
+          <div>
+            <label className="text-base font-bold text-slate-700">יום חופש שבועי קבוע</label>
+            <p className="text-sm text-slate-400">אם יש לך יום קבוע בלי הוראה — נוריד אותו מהספירה.</p>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {[
+                { v: null as number | null, label: 'אין' },
+                { v: 0, label: 'א׳' },
+                { v: 1, label: 'ב׳' },
+                { v: 2, label: 'ג׳' },
+                { v: 3, label: 'ד׳' },
+                { v: 4, label: 'ה׳' },
+                ...(schoolWeek === 6 ? [{ v: 5, label: 'ו׳' }] : []),
+              ].map((opt) => (
+                <button
+                  key={String(opt.v)}
+                  type="button"
+                  onClick={() => setDayOff(opt.v)}
+                  aria-pressed={dayOff === opt.v}
+                  className="rounded-full px-4 py-2 text-sm font-semibold"
+                  style={
+                    dayOff === opt.v
+                      ? { background: 'var(--theme)', color: '#fff' }
+                      : { background: 'rgba(255,255,255,0.6)', color: '#475569' }
+                  }
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="glass rounded-2xl p-4 text-sm text-slate-500 shadow-sm">
             <div>בית ספר: <span className="font-semibold text-slate-700">{school?.name}</span></div>
             <div>

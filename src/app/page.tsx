@@ -1,5 +1,10 @@
 import type { CSSProperties } from 'react';
-import { calculateCountdown, categorizeSchoolYear, upcomingFromItems } from '@/lib/domain';
+import {
+  calculateCountdown,
+  categorizeSchoolYear,
+  schoolDaysForWeek,
+  upcomingFromItems,
+} from '@/lib/domain';
 import { themeColorValue } from '@/lib/theme';
 import { dailyMotivation } from '@/lib/motivation';
 import { getScreenModel } from '@/lib/data/screen';
@@ -29,6 +34,8 @@ export default async function HomePage() {
     closedDates,
     personalDates,
     yearStart: model.yearStart,
+    schoolDaysOfWeek: schoolDaysForWeek(model.schoolWeek),
+    weeklyDayOff: model.dayOff,
   });
 
   const upcoming = upcomingFromItems(today, items, 5);

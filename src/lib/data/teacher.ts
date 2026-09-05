@@ -16,6 +16,8 @@ export interface TeacherContext {
     email: string | null;
     themeColor: string;
     targetDate: string | null; // 'yyyy-MM-dd'
+    schoolWeek: number; // 5 או 6
+    dayOff: number | null; // 0=ראשון … 6=שבת; null=אין
   };
   school: { name: string | null; educationStage: string | null; sector: string | null } | null;
   religionIds: number[];
@@ -52,7 +54,7 @@ export async function loadTeacherContext(): Promise<TeacherLoad> {
   const { data: teacherRow } = await supabase
     .from('teachers')
     .select(
-      'id, full_name, email, theme_color, target_date, school_id, schools(name, education_stage, sector)',
+      'id, full_name, email, theme_color, target_date, school_week, day_off, school_id, schools(name, education_stage, sector)',
     )
     .eq('id', user.id)
     .maybeSingle();
@@ -63,7 +65,7 @@ export async function loadTeacherContext(): Promise<TeacherLoad> {
 
   // רץ במקביל — מקצר את זמן הטעינה בכל ניווט.
   // חגים: נטענים כולם (כל הדתות) לשנה; הסיווג לפי מגזר/דת נעשה ב-domain.
-  const [religionRes, customRes, holidayRes] = await Promise.all([
+  const [religionRes, customRes, holidayRes, overrideRes] = await Promise.all([
     supabase.from('teacher_religions').select('religion_id').eq('teacher_id', user.id),
     supabase
       .from('custom_days')
@@ -75,11 +77,35 @@ export async function loadTeacherContext(): Promise<TeacherLoad> {
       .select('id, religion_id, name, date, school_year, is_school_closed, source')
       .eq('school_year', schoolYear)
       .order('date'),
+    supabase
+      .from('holiday_overrides')
+      .select('holiday_id, hidden, custom_name, custom_date')
+      .eq('teacher_id', user.id),
   ]);
 
   const religionIds = (religionRes.data ?? []).map((r) => r.religion_id as number);
-  const holidays = (holidayRes.data ?? []).map(mapHoliday);
   const customDays = (customRes.data ?? []).map(mapCustomDay);
+
+  // החלת עקיפות אישיות על החגים המוגדרים-מראש (הסתרה / שם / תאריך).
+  const overrides = new Map<string, { hidden: boolean; name: string | null; date: string | null }>();
+  for (const o of overrideRes.data ?? []) {
+    overrides.set(o.holiday_id as string, {
+      hidden: (o.hidden as boolean) ?? false,
+      name: (o.custom_name as string | null) ?? null,
+      date: (o.custom_date as string | null) ?? null,
+    });
+  }
+  const holidays: Holiday[] = [];
+  for (const row of holidayRes.data ?? []) {
+    const h = mapHoliday(row);
+    const ov = overrides.get(h.id);
+    if (ov?.hidden) continue;
+    holidays.push({
+      ...h,
+      name: ov?.name ?? h.name,
+      date: ov?.date ?? h.date,
+    });
+  }
 
   return {
     status: 'ok',
@@ -90,6 +116,8 @@ export async function loadTeacherContext(): Promise<TeacherLoad> {
         email: (teacherRow.email as string | null) ?? null,
         themeColor: (teacherRow.theme_color as string | null) ?? 'emerald',
         targetDate: (teacherRow.target_date as string | null) ?? null,
+        schoolWeek: (teacherRow.school_week as number | null) ?? 5,
+        dayOff: (teacherRow.day_off as number | null) ?? null,
       },
       school: normalizeSchool(teacherRow.schools)
         ? {
