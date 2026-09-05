@@ -2,47 +2,46 @@
  * ליבת המוצר: ספירת ימי לימוד שנותרו.
  *
  * לוגיקה טהורה בלבד — ללא תלות ב-Supabase, ב-React או ברשת.
- * כל חישוב עובד ברמת יום (DATE), ללא שעות או אזור-זמן, כדי למנוע את הבאג
- * הנפוץ ביותר באפליקציות ספירה (ראו CLAUDE.md §11.1).
+ * כל חישוב עובד ברמת יום (DATE), ללא שעות או אזור-זמן (ראו CLAUDE.md §11.1).
  *
  * כללי הספירה (CLAUDE.md §5):
- *   1. שבוע הלימודים בישראל: ראשון–חמישי. שישי ושבת אינם ימי לימוד.
- *   2. יום שנופל בסופ"ש לא מנוכה פעמיים.
- *   3. חג עם is_school_closed=false אינו מנוכה מספירת ימי הלימוד הכללית
- *      (המתקשר פשוט לא מעביר אותו כ-closedDate).
- *   4. יום אישי עם affects_countdown=false מוצג אך לא מנוכה
- *      (המתקשר פשוט לא מעביר אותו כ-personalDate).
+ *   1. שבוע הלימודים בישראל: ראשון–חמישי (5 ימים). בבתי ספר עם 6 ימים גם שישי.
+ *   2. יום שנופל בסופ"ש / ביום שאינו יום לימוד לא מנוכה פעמיים.
+ *   3. חג עם is_school_closed=false אינו מנוכה מספירת ימי הלימוד.
+ *   4. יום אישי עם affects_countdown=false מוצג אך לא מנוכה.
+ *   5. יום החופש השבועי הקבוע של המורה מנוכה מימי העבודה שלו.
  */
 
 import { differenceInCalendarDays, eachDayOfInterval, getDay } from 'date-fns';
 
 export interface CountdownInput {
-  /** נקודת ההתחלה לספירה (בדרך כלל "היום"). */
   from: Date;
-  /** תאריך היעד — יום הלימוד האחרון של השנה. */
   target: Date;
-  /** ימים שבהם בית הספר סגור (חגים עם is_school_closed=true, חופשות). */
   closedDates: Date[];
-  /** ימים אישיים המנוכים מהספירה (custom_days עם affects_countdown=true). */
   personalDates: Date[];
-  /**
-   * תחילת שנת הלימודים — אופציונלי.
-   * כאשר מסופק, מאפשר לחשב percentComplete ("X% מהשנה מאחוריך") על בסיס ימי לימוד.
-   * ללא ערך זה, percentComplete יהיה 0.
-   */
   yearStart?: Date;
+  /** ימי הלימוד בשבוע (getDay: 0=ראשון…6=שבת). ברירת מחדל: ראשון–חמישי. */
+  schoolDaysOfWeek?: number[];
+  /** יום החופש השבועי הקבוע של המורה (0–6), אם קיים — מנוכה מימי העבודה. */
+  weeklyDayOff?: number | null;
 }
 
 export interface CountdownResult {
-  /** ימי לימוד שנותרו בפועל (כולל היום והיעד אם הם ימי לימוד). */
   schoolDays: number;
-  /** ימים קלנדריים שנותרו (כולל היום והיעד). */
   calendarDays: number;
-  /** אחוז ימי הלימוד שכבר עברו מתחילת השנה (0 אם yearStart לא סופק). */
   percentComplete: number;
 }
 
-/** ימי סוף השבוע לפי getDay של date-fns: 5=שישי, 6=שבת. (0=ראשון ... 4=חמישי) */
+/** שבוע לימודים בן 5 ימים — ראשון עד חמישי. */
+export const SCHOOL_WEEK_5 = [0, 1, 2, 3, 4];
+/** שבוע לימודים בן 6 ימים — ראשון עד שישי. */
+export const SCHOOL_WEEK_6 = [0, 1, 2, 3, 4, 5];
+
+/** ממיר מספר ימי לימוד בשבוע (5/6) לרשימת ימי השבוע. */
+export function schoolDaysForWeek(weekType: number): number[] {
+  return weekType === 6 ? SCHOOL_WEEK_6 : SCHOOL_WEEK_5;
+}
+
 const WEEKEND_DAYS: ReadonlySet<number> = new Set([5, 6]);
 
 /** האם התאריך נופל בסוף השבוע (שישי/שבת)? */
@@ -50,16 +49,11 @@ export function isWeekend(date: Date): boolean {
   return WEEKEND_DAYS.has(getDay(date));
 }
 
-/** האם התאריך הוא יום לימוד פוטנציאלי מבחינת יום בשבוע (ראשון–חמישי)? */
+/** האם התאריך הוא יום לימוד פוטנציאלי (ראשון–חמישי)? */
 export function isSchoolWeekday(date: Date): boolean {
   return !isWeekend(date);
 }
 
-/**
- * מפתח יום מקומי בפורמט yyyy-MM-dd.
- * מחושב מרכיבי התאריך המקומיים (ולא ISO/UTC) כדי לשמור על סמנטיקת DATE
- * ולהימנע מהיסטים של יום שלם באזורי-זמן שונים.
- */
 function dateKey(date: Date): string {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -74,22 +68,24 @@ function toKeySet(dates: Date[]): Set<string> {
 }
 
 /**
- * סופר ימי לימוד בטווח [start, end] (כולל שני הקצוות).
- *
- * הספירה היא "מלמטה למעלה" — מונים רק ימים שהם ימי לימוד תקפים — ולכן
- * יום סוף-שבוע שגם מסומן כסגור/אישי לעולם לא מנוכה פעמיים (כלל 2).
+ * סופר ימי לימוד בטווח [start, end] (כולל), בגישת "מלמטה למעלה" —
+ * מונים רק ימים שהם יום לימוד תקף, ולכן אין ניכוי כפול (כלל 2).
  */
 function countSchoolDays(
   start: Date,
   end: Date,
   closed: ReadonlySet<string>,
   personal: ReadonlySet<string>,
+  schoolDays: ReadonlySet<number>,
+  weeklyDayOff: number | null,
 ): number {
   if (differenceInCalendarDays(end, start) < 0) return 0;
 
   let count = 0;
   for (const day of eachDayOfInterval({ start, end })) {
-    if (isWeekend(day)) continue; // כלל 1 + 2: סופ"ש לעולם אינו נספר
+    const weekday = getDay(day);
+    if (!schoolDays.has(weekday)) continue; // לא יום לימוד בשבוע (כלל 1+2)
+    if (weeklyDayOff !== null && weekday === weeklyDayOff) continue; // יום חופש שבועי (כלל 5)
     const key = dateKey(day);
     if (closed.has(key)) continue; // בית הספר סגור
     if (personal.has(key)) continue; // יום אישי מנוכה
@@ -98,32 +94,27 @@ function countSchoolDays(
   return count;
 }
 
-/**
- * מחשב את ספירת ימי הלימוד שנותרה עד תאריך היעד.
- *
- * זו הפונקציה שכל המוצר נשען עליה — כל טעות בספירה שוברת אמון (CLAUDE.md §11.5).
- */
+/** מחשב את ספירת ימי הלימוד שנותרה עד תאריך היעד. */
 export function calculateCountdown(input: CountdownInput): CountdownResult {
   const { from, target, closedDates, personalDates, yearStart } = input;
 
-  // היעד כבר עבר → אין ימים שנותרו, השנה הושלמה.
   if (differenceInCalendarDays(target, from) < 0) {
     return { schoolDays: 0, calendarDays: 0, percentComplete: 100 };
   }
 
   const closed = toKeySet(closedDates);
   const personal = toKeySet(personalDates);
+  const schoolDaysSet = new Set(input.schoolDaysOfWeek ?? SCHOOL_WEEK_5);
+  const weeklyDayOff = input.weeklyDayOff ?? null;
 
-  const schoolDays = countSchoolDays(from, target, closed, personal);
-  // +1 כדי לכלול את שני הקצוות (היום והיעד).
+  const schoolDays = countSchoolDays(from, target, closed, personal, schoolDaysSet, weeklyDayOff);
   const calendarDays = differenceInCalendarDays(target, from) + 1;
 
   let percentComplete = 0;
   if (yearStart && differenceInCalendarDays(from, yearStart) > 0) {
-    const totalSchoolDays = countSchoolDays(yearStart, target, closed, personal);
-    if (totalSchoolDays > 0) {
-      const past = totalSchoolDays - schoolDays;
-      percentComplete = Math.round((past / totalSchoolDays) * 100);
+    const total = countSchoolDays(yearStart, target, closed, personal, schoolDaysSet, weeklyDayOff);
+    if (total > 0) {
+      percentComplete = Math.round(((total - schoolDays) / total) * 100);
     }
   }
 

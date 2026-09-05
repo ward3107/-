@@ -355,6 +355,12 @@ https://data.gov.il/api/action/datastore_search?resource_id=<ID>&limit=32000
 - `src/lib/supabase/` — לקוחות Supabase (browser + server) + middleware לרענון סשן.
 - `src/components/` — HeroCount · ProgressBar · StatCard · UpcomingList · MonthCalendar · BottomNav.
 
+**מיושם (לוח זמנים אישי + עקיפות):**
+- ספירה מתחשבת ב**שבוע 5/6 ימים** וב**יום חופש שבועי קבוע** של המורה (`calculateCountdown` עם `schoolDaysOfWeek`/`weeklyDayOff`).
+- נגזרות מ-`teachers.school_week`/`day_off` (migration `0003`), נקבעות ב-onboarding וניתנות לעריכה בפרופיל.
+- **עקיפות חגים אישיות** (`holiday_overrides`): שינוי שם / הזזת תאריך / הסתרה של חג מוגדר-מראש, ישירות מהלוח.
+- seed החגים עודכן ללוח הרשמי של משרד החינוך תשפ"ז (יום-אחר-יום; פסח = חופשה בת שבועיים).
+
 **מיושם (ההבחנה של §1):** `school-vacations.ts` — הפרדת שני מקורות ימי החופש:
 חופשות בית הספר לפי **מגזר בית הספר** (`sectorClosureReligionIds`) מול חגים אישיים לפי **דת המורה**
 (חג שביה"ס פתוח בו → יום אישי מנוכה). המספר הראשי = ימי העבודה בפועל של המורה. מכוסה בבדיקות.

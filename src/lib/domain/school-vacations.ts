@@ -39,6 +39,7 @@ export interface CategorizedDay {
   kind: UpcomingKind;
   title: string;
   customId?: string; // רק לימים אישיים, לצורך מחיקה
+  holidayId?: string; // רק לחגים מוגדרים-מראש, לצורך עקיפה (שם/תאריך/הסתרה)
 }
 
 export interface Categorization {
@@ -81,7 +82,7 @@ export function categorizeSchoolYear(input: CategorizeInput): Categorization {
     if (closedKeys.has(h.date)) continue;
     closedKeys.add(h.date);
     closedDates.push(parseDateString(h.date));
-    items.push({ date: h.date, kind: 'school-closed', title: h.name });
+    items.push({ date: h.date, kind: 'school-closed', title: h.name, holidayId: h.id });
   }
 
   // 2. חג אישי — חג של דת המורה (יום חופש) שבו ביה"ס פתוח.
@@ -90,7 +91,7 @@ export function categorizeSchoolYear(input: CategorizeInput): Categorization {
     if (closedKeys.has(h.date) || personalKeys.has(h.date)) continue;
     personalKeys.add(h.date);
     personalDates.push(parseDateString(h.date));
-    items.push({ date: h.date, kind: 'personal-holiday', title: h.name });
+    items.push({ date: h.date, kind: 'personal-holiday', title: h.name, holidayId: h.id });
   }
 
   // 3. ימים אישיים ידניים.
@@ -102,16 +103,30 @@ export function categorizeSchoolYear(input: CategorizeInput): Categorization {
   return { closedDates, personalDates, items };
 }
 
-/** בונה רשימת "ימים קרובים" מהפריטים המסווגים — מהיום והלאה, ממוין. */
+/**
+ * בונה רשימת "ימים קרובים" מהפריטים המסווגים — מהיום והלאה, ממוין.
+ * מכווץ ימים רצופים של אותו חג (למשל פסח בן שבועיים) לפריט אחד.
+ */
 export function upcomingFromItems(
   from: Date,
   items: CategorizedDay[],
   limit?: number,
 ): UpcomingItem[] {
   const startOfDay = new Date(from.getFullYear(), from.getMonth(), from.getDate()).getTime();
-  const upcoming = items
+  const sorted = items
     .map((i) => ({ kind: i.kind, title: i.title, date: i.date, dateObj: parseDateString(i.date) }))
     .filter((i) => i.dateObj.getTime() >= startOfDay)
     .sort((a, b) => a.dateObj.getTime() - b.dateObj.getTime());
-  return typeof limit === 'number' ? upcoming.slice(0, limit) : upcoming;
+
+  // כיווץ לפי סוג+כותרת — הופעה ראשונה (המוקדמת ביותר) נשמרת.
+  const seen = new Set<string>();
+  const collapsed: UpcomingItem[] = [];
+  for (const item of sorted) {
+    const key = `${item.kind}|${item.title}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    collapsed.push(item);
+  }
+
+  return typeof limit === 'number' ? collapsed.slice(0, limit) : collapsed;
 }

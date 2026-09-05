@@ -4,13 +4,14 @@ import { useMemo, useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { addMonths, getDay, getDaysInMonth, startOfMonth } from 'date-fns';
 import type { CategorizedDay, UpcomingKind } from '@/lib/domain';
-import { deleteCustomDay } from '@/app/actions';
+import { deleteCustomDay, resetHolidayOverride, setHolidayOverride } from '@/app/actions';
 import { AddDayDialog } from '@/components/AddDayDialog';
 
 interface DayEntry {
   kind: UpcomingKind;
   title: string;
   customId?: string;
+  holidayId?: string;
 }
 
 const WEEKDAY_LABELS = ['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'];
@@ -43,7 +44,7 @@ export function MonthCalendar({ items }: { items: CategorizedDay[] }) {
     const map = new Map<string, DayEntry[]>();
     for (const it of items) {
       const list = map.get(it.date) ?? [];
-      list.push({ kind: it.kind, title: it.title, customId: it.customId });
+      list.push({ kind: it.kind, title: it.title, customId: it.customId, holidayId: it.holidayId });
       map.set(it.date, list);
     }
     return map;
@@ -65,6 +66,38 @@ export function MonthCalendar({ items }: { items: CategorizedDay[] }) {
   function removeDay(id: string) {
     startDelete(async () => {
       await deleteCustomDay(id);
+      router.refresh();
+    });
+  }
+
+  function renameHoliday(id: string, current: string) {
+    const name = window.prompt('שם חדש לחג:', current);
+    if (name === null) return;
+    startDelete(async () => {
+      await setHolidayOverride(id, { name: name.trim() || current });
+      router.refresh();
+    });
+  }
+
+  function moveHoliday(id: string, currentDate: string) {
+    const date = window.prompt('תאריך חדש (YYYY-MM-DD):', currentDate);
+    if (date === null || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return;
+    startDelete(async () => {
+      await setHolidayOverride(id, { date });
+      router.refresh();
+    });
+  }
+
+  function hideHoliday(id: string) {
+    startDelete(async () => {
+      await setHolidayOverride(id, { hidden: true });
+      router.refresh();
+    });
+  }
+
+  function restoreHoliday(id: string) {
+    startDelete(async () => {
+      await resetHolidayOverride(id);
       router.refresh();
     });
   }
@@ -169,24 +202,63 @@ export function MonthCalendar({ items }: { items: CategorizedDay[] }) {
           ) : (
             <ul className="flex flex-col gap-2">
               {selectedEntries.map((e, idx) => (
-                <li key={idx} className="flex items-center gap-2">
-                  <span
-                    className="h-3 w-3 shrink-0 rounded-full"
-                    style={{ backgroundColor: KIND_COLOR[e.kind] }}
-                  />
-                  <div className="flex-1">
-                    <div className="text-sm font-semibold text-slate-800">{e.title}</div>
-                    <div className="text-xs text-slate-400">{KIND_LABEL[e.kind]}</div>
+                <li key={idx} className="flex flex-col gap-2">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="h-3 w-3 shrink-0 rounded-full"
+                      style={{ backgroundColor: KIND_COLOR[e.kind] }}
+                    />
+                    <div className="flex-1">
+                      <div className="text-sm font-semibold text-slate-800">{e.title}</div>
+                      <div className="text-xs text-slate-400">{KIND_LABEL[e.kind]}</div>
+                    </div>
+                    {e.customId && (
+                      <button
+                        type="button"
+                        onClick={() => removeDay(e.customId!)}
+                        disabled={isDeleting}
+                        className="rounded-full px-3 py-1 text-xs font-semibold text-rose-500 ring-1 ring-rose-200 disabled:opacity-50"
+                      >
+                        מחיקה
+                      </button>
+                    )}
                   </div>
-                  {e.customId && (
-                    <button
-                      type="button"
-                      onClick={() => removeDay(e.customId!)}
-                      disabled={isDeleting}
-                      className="rounded-full px-3 py-1 text-xs font-semibold text-rose-500 ring-1 ring-rose-200 disabled:opacity-50"
-                    >
-                      מחיקה
-                    </button>
+
+                  {e.holidayId && selected && (
+                    <div className="flex flex-wrap gap-2 pr-5">
+                      <button
+                        type="button"
+                        onClick={() => renameHoliday(e.holidayId!, e.title)}
+                        disabled={isDeleting}
+                        className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200 disabled:opacity-50"
+                      >
+                        שינוי שם
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveHoliday(e.holidayId!, selected)}
+                        disabled={isDeleting}
+                        className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-slate-600 ring-1 ring-slate-200 disabled:opacity-50"
+                      >
+                        שינוי תאריך
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => hideHoliday(e.holidayId!)}
+                        disabled={isDeleting}
+                        className="rounded-full bg-white/70 px-3 py-1 text-xs font-semibold text-rose-500 ring-1 ring-rose-200 disabled:opacity-50"
+                      >
+                        הסתרה
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => restoreHoliday(e.holidayId!)}
+                        disabled={isDeleting}
+                        className="rounded-full px-3 py-1 text-xs font-semibold text-slate-400 disabled:opacity-50"
+                      >
+                        שחזור
+                      </button>
+                    </div>
                   )}
                 </li>
               ))}

@@ -24,6 +24,8 @@ export interface ScreenModel {
   sector: string | null;
   religionIds: number[];
   themeColor: string;
+  schoolWeek: number;
+  dayOff: number | null;
   holidays: Holiday[];
   customDays: CustomDay[];
   target: Date;
@@ -43,6 +45,8 @@ export async function getScreenModel(): Promise<ScreenModel> {
       sector: 'יהודי',
       religionIds: [1],
       themeColor: MOCK_TEACHER.themeColor,
+      schoolWeek: 5,
+      dayOff: null,
       holidays: MOCK_HOLIDAYS,
       customDays: MOCK_CUSTOM_DAYS,
       target: inferTargetDate(MOCK_TEACHER.educationStage, endYear),
@@ -68,6 +72,8 @@ export async function getScreenModel(): Promise<ScreenModel> {
     sector: d.school?.sector ?? null,
     religionIds: d.religionIds,
     themeColor: d.teacher.themeColor,
+    schoolWeek: d.teacher.schoolWeek,
+    dayOff: d.teacher.dayOff,
     holidays: d.holidays,
     customDays: d.customDays,
     target,

@@ -4,6 +4,7 @@ import { getScreenModel } from '@/lib/data/screen';
 import { BottomNav } from '@/components/BottomNav';
 import { LogoutButton } from '@/components/LogoutButton';
 import { ThemePicker } from '@/components/ThemePicker';
+import { ScheduleEditor } from '@/components/ScheduleEditor';
 import { hasSupabaseEnv } from '@/lib/supabase/env';
 
 export const dynamic = 'force-dynamic';
@@ -41,6 +42,15 @@ export default async function ProfilePage() {
             <span className="text-sm font-bold text-slate-800">{r.value}</span>
           </div>
         ))}
+      </div>
+
+      <div className="glass rounded-[24px] p-5">
+        <div className="mb-3 text-sm font-bold text-slate-600">לוח זמנים</div>
+        {hasSupabaseEnv ? (
+          <ScheduleEditor schoolWeek={model.schoolWeek} dayOff={model.dayOff} />
+        ) : (
+          <p className="text-sm text-slate-400">התחבר כדי לערוך את לוח הזמנים.</p>
+        )}
       </div>
 
       <div className="glass rounded-[24px] p-5">

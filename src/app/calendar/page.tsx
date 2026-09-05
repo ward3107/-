@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react';
-import { calculateCountdown, categorizeSchoolYear } from '@/lib/domain';
+import { calculateCountdown, categorizeSchoolYear, schoolDaysForWeek } from '@/lib/domain';
 import { themeColorValue } from '@/lib/theme';
 import { getScreenModel } from '@/lib/data/screen';
 import { MonthCalendar } from '@/components/MonthCalendar';
@@ -25,6 +25,8 @@ export default async function CalendarPage() {
     closedDates,
     personalDates,
     yearStart: model.yearStart,
+    schoolDaysOfWeek: schoolDaysForWeek(model.schoolWeek),
+    weeklyDayOff: model.dayOff,
   });
 
   const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
