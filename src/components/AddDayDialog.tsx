@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { addCustomDay } from '@/app/actions';
 
@@ -18,6 +19,9 @@ export function AddDayDialog({ defaultDate }: { defaultDate?: string }) {
   const [date, setDate] = useState(defaultDate ?? todayInput());
   const [affects, setAffects] = useState(true);
   const [isSaving, startSave] = useTransition();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   function submit() {
     if (!title.trim() || !date) return;
@@ -39,7 +43,8 @@ export function AddDayDialog({ defaultDate }: { defaultDate?: string }) {
         + יום משלי
       </button>
 
-      {open && (
+      {open && mounted &&
+        createPortal(
         <div
           className="fixed inset-0 z-50 flex items-end justify-center bg-black/30 p-4 backdrop-blur-sm sm:items-center"
           onClick={() => setOpen(false)}
@@ -94,8 +99,9 @@ export function AddDayDialog({ defaultDate }: { defaultDate?: string }) {
               </button>
             </div>
           </div>
-        </div>
-      )}
+        </div>,
+          document.body,
+        )}
     </>
   );
 }
